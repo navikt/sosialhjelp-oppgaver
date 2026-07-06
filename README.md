@@ -21,6 +21,7 @@ Start backend lokalt:
 
 ```bash
 mise backend:dev
+# tilgjengelig på http://localhost:8083
 ```
 
 ## Struktur
@@ -28,7 +29,7 @@ mise backend:dev
 ```
 mise.toml               # rot-nivå task runner
 apps/
-  backend/              # Kotlin/Spring Boot API
+  backend/              # Kotlin/Ktor API (port 8083 lokalt)
   frontend-nks/         # fremtidig — NKS-flate
   frontend-navkontor/   # fremtidig — Nav-kontor-flate
 docs/
@@ -45,8 +46,24 @@ Alle kommandoer kjøres fra rotmappen:
 |---|---|
 | `mise build` | Bygg backend |
 | `mise test` | Kjør tester |
-| `mise check` | Bygg + test + lint |
-| `mise backend:dev` | Start backend lokalt (port 8080) |
+| `mise check` | Bygg + test + lint (ktlint) |
+| `mise backend:dev` | Start backend lokalt (port 8083) |
+
+## Lokale avhengigheter
+
+| Tjeneste | Port  | Formål |
+|---|-------|---|
+| PostgreSQL | 54323 | Database |
+| mock-oauth2-server | 8888  | Lokal JWT-utsteder |
+
+## API
+
+| Metode | Sti | Scope |
+|---|---|---|
+| `POST` | `/api/oppgaver` | `nks` |
+| `GET` | `/api/oppgaver?enhet=<enhet>` | `navkontor` |
+| `GET` | `/api/oppgaver/{id}` | `navkontor` |
+| `PATCH` | `/api/oppgaver/{id}` | `navkontor` |
 
 ## Arkitektur
 
