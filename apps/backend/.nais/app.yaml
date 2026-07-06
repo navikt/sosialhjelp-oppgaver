@@ -31,7 +31,13 @@ spec:
       enabled: true
   accessPolicy:
     inbound:
-      rules: [] # TODO: legg til klientapplikasjoner med scopes
+      rules:
+        - application: sosialhjelp-oppgaver-frontend
+          namespace: teamdigisos
+          permissions:
+            scopes:
+              - nks
+              - navkontor
   gcp:
     sqlInstances:
       - type: POSTGRES_15

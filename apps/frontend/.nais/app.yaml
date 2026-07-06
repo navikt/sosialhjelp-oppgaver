@@ -1,0 +1,59 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: sosialhjelp-oppgaver-frontend
+  namespace: teamdigisos
+  labels:
+    team: teamdigisos
+spec:
+  image: {{ image }}
+  port: 3000
+
+  ingresses:
+    - https://sosialhjelp-oppgaver.intern.nav.no
+
+  liveness:
+    path: /isalive
+    initialDelay: 10
+  readiness:
+    path: /isready
+    initialDelay: 10
+
+  prometheus:
+    enabled: true
+    path: /metrics
+
+  replicas:
+    min: 2
+    max: 4
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+
+  azure:
+    application:
+      enabled: true
+
+  wonderwall:
+    enabled: true
+    logoutRedirectURL: /
+    autoLogin: true
+
+  accessPolicy:
+    outbound:
+      rules:
+        - application: sosialhjelp-oppgaver-api
+          namespace: teamdigisos
+
+  env:
+    - name: BACKEND_URL
+      value: http://sosialhjelp-oppgaver-api
+    - name: BACKEND_AUDIENCE
+      value: api://prod-gcp.teamdigisos.sosialhjelp-oppgaver-api/.default
+    # TODO: Erstatt med ansatt→enhet-mapping når den er på plass
+    - name: HARDCODED_ENHET
+      value: "0301"

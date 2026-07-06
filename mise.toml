@@ -13,3 +13,19 @@ description = "Bygg + test + lint"
 [tasks."backend:dev"]
 run = "cd apps/backend && ./gradlew run"
 description = "Start backend lokalt (port 8080)"
+
+[tasks."frontend:dev"]
+run = "cd apps/frontend && pnpm dev --port 3003"
+description = "Start frontend lokalt (port 3003)"
+
+[tasks.dev]
+run = """
+cd apps/backend && ./gradlew run &
+cd apps/frontend && pnpm dev --port 3003 &
+wait
+"""
+description = "Start backend og frontend lokalt"
+
+[tasks."frontend:check"]
+run = "cd apps/frontend && pnpm check"
+description = "Bygg + typecheck + lint + fmt:check + test frontend"

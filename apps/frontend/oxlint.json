@@ -1,0 +1,11 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oxc-project/oxc/main/crates/oxc_linter/schema/oxlint.schema.json",
+  "plugins": ["react", "typescript", "nextjs", "jsx-a11y", "vitest"],
+  "rules": {
+    "no-unused-vars": "error",
+    "no-console": "warn"
+  },
+  "ignore": {
+    "patterns": [".next/**", "node_modules/**"]
+  }
+}
