@@ -1,20 +1,22 @@
 package no.nav.sosialhjelp.oppgaver
 
+import io.ktor.server.config.*
+
 data class AppConfig(
     val auth: AuthConfig,
     val database: DatabaseConfig,
 ) {
     companion object {
-        fun from(env: Map<String, String>): AppConfig = AppConfig(
+        fun from(config: ApplicationConfig): AppConfig = AppConfig(
             auth = AuthConfig(
-                jwksUri = env.getValue("AZURE_OPENID_CONFIG_JWKS_URI"),
-                issuer = env.getValue("AZURE_OPENID_CONFIG_ISSUER"),
-                audience = env.getValue("AZURE_APP_CLIENT_ID"),
+                jwksUri = config.property("auth.jwksUri").getString(),
+                issuer = config.property("auth.issuer").getString(),
+                audience = config.property("auth.audience").getString(),
             ),
             database = DatabaseConfig(
-                jdbcUrl = env.getValue("DB_JDBC_URL"),
-                username = env.getValue("DB_USERNAME"),
-                password = env.getValue("DB_PASSWORD"),
+                jdbcUrl = config.property("database.jdbcUrl").getString(),
+                username = config.property("database.username").getString(),
+                password = config.property("database.password").getString(),
             ),
         )
     }

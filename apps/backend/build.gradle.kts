@@ -16,7 +16,7 @@ java {
 }
 
 application {
-    mainClass.set("no.nav.sosialhjelp.oppgaver.ApplicationKt")
+    mainClass.set("io.ktor.server.netty.EngineMain")
 }
 
 repositories {
