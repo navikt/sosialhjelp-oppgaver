@@ -5,15 +5,31 @@ Prosjektet er organisert som et monorepo (se [ADR-0001](docs/adr/0001-monorepo.m
 
 ## Build & Test Commands
 
+Kjør fra rotmappen med `mise`:
+
 ```bash
-# TODO: legg til build- og testkommandoer når stack er valgt
+mise build        # bygg backend
+mise test         # kjør tester
+mise check        # bygg + test + lint
+mise backend:dev  # start backend lokalt (port 8080)
 ```
 
 ## Project Structure
 
 ```text
+mise.toml               # Root task runner
+apps/
+  backend/              # Kotlin/Spring Boot API
+    gradle/
+      libs.versions.toml  # Central dependency version catalog
+      wrapper/
+    gradlew
+    build.gradle.kts
+    settings.gradle.kts
 docs/
-  adr/          # Architecture Decision Records
+  adr/                  # Architecture Decision Records
+.github/
+  workflows/            # CI/CD (build-and-deploy.yaml)
 ```
 
 ## Code Style

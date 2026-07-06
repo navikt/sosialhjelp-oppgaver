@@ -1,0 +1,15 @@
+[tasks.build]
+run = "cd apps/backend && ./gradlew build"
+description = "Bygg backend"
+
+[tasks.test]
+run = "cd apps/backend && ./gradlew test"
+description = "Kjør tester"
+
+[tasks.check]
+run = "cd apps/backend && ./gradlew check"
+description = "Bygg + test + lint"
+
+[tasks."backend:dev"]
+run = "cd apps/backend && ./gradlew bootRun"
+description = "Start backend lokalt (port 8080)"
