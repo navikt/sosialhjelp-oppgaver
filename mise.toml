@@ -11,5 +11,5 @@ run = "cd apps/backend && ./gradlew check"
 description = "Bygg + test + lint"
 
 [tasks."backend:dev"]
-run = "cd apps/backend && ./gradlew bootRun"
+run = "cd apps/backend && ./gradlew run"
 description = "Start backend lokalt (port 8080)"

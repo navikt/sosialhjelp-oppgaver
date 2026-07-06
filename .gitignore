@@ -12,3 +12,7 @@ target
 *.project
 *.settings
 *.classpath
+
+# Gradle
+.gradle/
+apps/backend/build/
