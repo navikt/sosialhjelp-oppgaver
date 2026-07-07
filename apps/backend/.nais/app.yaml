@@ -28,12 +28,12 @@ spec:
       memory: 256Mi
   azure:
     application:
+      allowAllUsers: true
       enabled: true
   accessPolicy:
     inbound:
       rules:
         - application: sosialhjelp-oppgaver
-          namespace: teamdigisos
           permissions:
             scopes:
               - nks
