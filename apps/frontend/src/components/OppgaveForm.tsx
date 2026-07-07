@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Alert, Button, Heading, Textarea, TextField, VStack } from '@navikt/ds-react'
-import { createOppgave } from '@/lib/api'
+import type { OpprettOppgaveRequest, Oppgave, ApiError } from '@/lib/api'
 
 interface FormValues {
   tittel: string
@@ -12,10 +12,12 @@ interface FormValues {
 }
 
 interface OppgaveFormProps {
-  token: string
+  opprettOppgave: (
+    data: Omit<OpprettOppgaveRequest, 'personId'>,
+  ) => Promise<{ oppgave: Oppgave } | { error: ApiError }>
 }
 
-export default function OppgaveForm({ token }: OppgaveFormProps) {
+export default function OppgaveForm({ opprettOppgave }: OppgaveFormProps) {
   const [success, setSuccess] = useState(false)
   const [apiError, setApiError] = useState<string | null>(null)
 
@@ -30,7 +32,7 @@ export default function OppgaveForm({ token }: OppgaveFormProps) {
     setSuccess(false)
     setApiError(null)
 
-    const result = await createOppgave(token, data)
+    const result = await opprettOppgave(data)
 
     if ('error' in result) {
       setApiError(result.error.message)

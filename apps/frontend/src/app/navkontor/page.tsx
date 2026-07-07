@@ -1,43 +1,57 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Alert, Heading, Page } from '@navikt/ds-react'
+import { Alert, Box, Heading, InlineMessage } from '@navikt/ds-react'
 import { getToken, validateAzureToken } from '@navikt/oasis'
 import { fetchOppgaver } from '@/lib/api'
-import ScopeNav from '@/components/ScopeNav'
 import OppgaveListe from '@/components/OppgaveListe'
 
 // TODO: Erstatt med ansatt→enhet-mapping når den er på plass
 const ENHET = process.env['HARDCODED_ENHET'] ?? '0301'
+const skipAuth = process.env['SKIP_AUTH'] === 'true'
 
-export default async function NavkontorPage() {
-  const headersList = await headers()
-  const token = getToken(headersList)
+async function NavkontorPage() {
+  let token: string
 
-  if (!token) {
-    redirect('/ingen-tilgang')
-  }
+  if (skipAuth) {
+    token = 'local-dev-token'
+  } else {
+    const headersList = await headers()
+    const rawToken = getToken(headersList)
 
-  const validation = await validateAzureToken(token)
-  if (!validation.ok) {
-    redirect('/ingen-tilgang')
+    if (!rawToken) {
+      redirect('/ingen-tilgang')
+    }
+
+    const validation = await validateAzureToken(rawToken)
+    if (!validation.ok) {
+      redirect('/ingen-tilgang')
+    }
+
+    token = rawToken
   }
 
   const result = await fetchOppgaver(token, ENHET)
 
   return (
-    <>
-      <ScopeNav />
-      <Page.Block as="main" width="xl" gutters>
-        <Heading level="1" size="large" spacing>
-          Oppgaver for enhet {ENHET}
-        </Heading>
+    <Box className="mt-20">
+      <Heading level="1" size="large" spacing>
+        Oppgaver for enhet {ENHET}
+      </Heading>
 
-        {'error' in result ? (
-          <Alert variant="error">{result.error.message}</Alert>
-        ) : (
-          <OppgaveListe oppgaver={result.oppgaver} />
-        )}
-      </Page.Block>
-    </>
+      {'error' in result ? (
+        <Alert variant="error">{result.error.message}</Alert>
+      ) : (
+        <NavKontorOppgaveListe oppgaver={result.oppgaver} />
+      )}
+    </Box>
   )
 }
+
+const NavKontorOppgaveListe: typeof OppgaveListe = (props) => {
+  if (props.oppgaver.length === 0) {
+    return <InlineMessage status="info">Ingen oppgaver for denne enheten.</InlineMessage>
+  }
+  return <OppgaveListe {...props} />
+}
+
+export default NavkontorPage

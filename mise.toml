@@ -11,7 +11,7 @@ run = "cd apps/backend && ./gradlew check"
 description = "Bygg + test + lint"
 
 [tasks."backend:dev"]
-run = "cd apps/backend && ./gradlew run"
+run = "cd apps/backend && AUTH_SKIP=true ./gradlew run"
 description = "Start backend lokalt (port 8080)"
 
 [tasks."frontend:dev"]
@@ -20,7 +20,7 @@ description = "Start frontend lokalt (port 3003)"
 
 [tasks.dev]
 run = """
-cd apps/backend && ./gradlew run &
+cd apps/backend && AUTH_SKIP=true ./gradlew run &
 cd apps/frontend && pnpm dev --port 3003 &
 wait
 """

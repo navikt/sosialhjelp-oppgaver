@@ -9,6 +9,7 @@ export interface Oppgave {
   id: string
   tittel: string
   opprettetAv: string
+  personId: string
   enhet: string
   status: OppgaveStatus
   opprettetAt: string
@@ -18,7 +19,12 @@ export interface Oppgave {
 export interface OpprettOppgaveRequest {
   tittel: string
   beskrivelse: string
+  personId: string
   enhet: string
+}
+
+export interface HentOppgaverRequest {
+  personId: string
 }
 
 export interface ApiError {
@@ -72,7 +78,7 @@ export async function fetchOppgaver(
 
 export async function createOppgave(
   incomingToken: string,
-  data: OpprettOppgaveRequest,
+  data: Omit<OpprettOppgaveRequest, 'personId'>,
 ): Promise<{ oppgave: Oppgave } | { error: ApiError }> {
   let token: string
   try {
@@ -80,14 +86,13 @@ export async function createOppgave(
   } catch {
     return { error: { message: 'Autentisering feilet', status: 401 } }
   }
-
   const response = await fetch(`${backendUrl}/api/oppgaver`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify({ ...data, personId: '16109127384' }),
   })
 
   if (!response.ok) {
@@ -96,4 +101,30 @@ export async function createOppgave(
 
   const oppgave = (await response.json()) as Oppgave
   return { oppgave }
+}
+
+export async function getOppgaver(
+  incomingToken: string,
+): Promise<{ oppgaver: Oppgave[] } | { error: ApiError }> {
+  let token: string
+  try {
+    token = await exchangeToken(incomingToken)
+  } catch {
+    return { error: { message: 'Autentisering feilet', status: 401 } }
+  }
+  const response = await fetch(`${backendUrl}/api/oppgaver/sok`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ personId: '16109127384' }),
+  })
+
+  if (!response.ok) {
+    return { error: { message: 'Kunne ikke hente oppgaver', status: response.status } }
+  }
+
+  const oppgaver = (await response.json()) as Oppgave[]
+  return { oppgaver }
 }

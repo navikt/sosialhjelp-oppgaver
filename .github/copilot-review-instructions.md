@@ -13,6 +13,6 @@
 
 Flag changes where the diff is disproportionate to the stated goal:
 
-- Renamed variables or parameters not related to the fix
+- Renamed variables For parameters not related to the fix
 - Restructured working code without justification
 - Added refactoring outside the PR scope

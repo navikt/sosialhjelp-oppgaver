@@ -17,6 +17,7 @@ object OppgaveTable : Table("oppgave") {
     val tittel = varchar("tittel", 500)
     val beskrivelse = text("beskrivelse")
     val opprettetAv = varchar("opprettet_av", 20)
+    val personId = varchar("person_id", 11)
     val enhet = varchar("enhet", 10)
     val status = enumerationByName<OppgaveStatus>("status", 20)
     val opprettetAt = timestamp("opprettet_at")
@@ -25,7 +26,7 @@ object OppgaveTable : Table("oppgave") {
     override val primaryKey = PrimaryKey(id)
 }
 
-class OppgaveRepository(private val database: Database) {
+object OppgaveRepository {
 
     fun lagre(oppgave: Oppgave): Oppgave = transaction {
         OppgaveTable.insert {
@@ -33,6 +34,7 @@ class OppgaveRepository(private val database: Database) {
             it[tittel] = oppgave.tittel
             it[beskrivelse] = oppgave.beskrivelse
             it[opprettetAv] = oppgave.opprettetAv
+            it[personId] = oppgave.personId
             it[enhet] = oppgave.enhet
             it[status] = oppgave.status
             it[opprettetAt] = oppgave.opprettetAt
@@ -45,6 +47,13 @@ class OppgaveRepository(private val database: Database) {
         OppgaveTable
             .selectAll()
             .where { OppgaveTable.enhet eq enhet }
+            .map { it.toOppgave() }
+    }
+
+    fun hentForPersonId(personId: String): List<Oppgave> = transaction {
+        OppgaveTable
+            .selectAll()
+            .where { OppgaveTable.personId eq personId }
             .map { it.toOppgave() }
     }
 
@@ -69,6 +78,7 @@ class OppgaveRepository(private val database: Database) {
         tittel = this[OppgaveTable.tittel],
         beskrivelse = this[OppgaveTable.beskrivelse],
         opprettetAv = this[OppgaveTable.opprettetAv],
+        personId = this[OppgaveTable.personId],
         enhet = this[OppgaveTable.enhet],
         status = this[OppgaveTable.status],
         opprettetAt = this[OppgaveTable.opprettetAt],

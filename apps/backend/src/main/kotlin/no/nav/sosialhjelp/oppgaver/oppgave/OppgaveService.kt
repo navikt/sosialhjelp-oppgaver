@@ -11,6 +11,7 @@ class OppgaveService(private val repository: OppgaveRepository) {
         require(request.tittel.isNotBlank()) { "Tittel kan ikke være tom" }
         require(request.enhet.isNotBlank()) { "Enhet kan ikke være tom" }
         require(request.beskrivelse.isNotBlank()) { "Beskrivelse kan ikke være tom" }
+        require(request.personId.isNotBlank()) { "Beskrivelse kan ikke være tom" }
 
         val now = Instant.now()
         val oppgave = Oppgave(
@@ -18,6 +19,7 @@ class OppgaveService(private val repository: OppgaveRepository) {
             tittel = request.tittel,
             beskrivelse = request.beskrivelse,
             opprettetAv = navIdent,
+            personId = request.personId,
             enhet = request.enhet,
             status = OppgaveStatus.NY,
             opprettetAt = now,
@@ -38,5 +40,11 @@ class OppgaveService(private val repository: OppgaveRepository) {
         repository.hentEn(id) ?: throw NoSuchElementException("Oppgave $id ikke funnet")
         return repository.oppdaterStatus(id, status, Instant.now())
             ?: throw NoSuchElementException("Oppgave $id ikke funnet")
+    }
+
+    fun hentOppgaverForPerson(personId: String): List<Oppgave> {
+        require(personId.isNotBlank()) { "PersonId kan ikke være tom" }
+        return repository.hentForPersonId(personId)
+
     }
 }

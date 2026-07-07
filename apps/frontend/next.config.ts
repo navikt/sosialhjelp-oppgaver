@@ -3,6 +3,7 @@ import type { NextConfig } from 'next'
 const nextConfig: NextConfig = {
   output: 'standalone',
   basePath: '/sosialhjelp/oppgaver',
+  serverExternalPackages: ['@navikt/oasis', 'prom-client'],
   env: {
     BACKEND_URL: process.env['BACKEND_URL'] ?? 'http://localhost:8083',
     // TODO: Erstatt med ansatt→enhet-mapping når den er på plass

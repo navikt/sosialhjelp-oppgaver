@@ -12,6 +12,7 @@ data class AppConfig(
                 jwksUri = config.property("auth.jwksUri").getString(),
                 issuer = config.property("auth.issuer").getString(),
                 audience = config.property("auth.audience").getString(),
+                skipAuth = System.getenv("AUTH_SKIP")?.lowercase() == "true",
             ),
             database = DatabaseConfig(
                 jdbcUrl = config.property("database.jdbcUrl").getString(),
@@ -26,6 +27,7 @@ data class AuthConfig(
     val jwksUri: String,
     val issuer: String,
     val audience: String,
+    val skipAuth: Boolean = false,
 )
 
 data class DatabaseConfig(

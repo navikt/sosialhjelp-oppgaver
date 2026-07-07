@@ -1,5 +1,12 @@
 import { Alert, Table, Tag } from '@navikt/ds-react'
 import type { Oppgave, OppgaveStatus } from '@/lib/api'
+import {
+  TableBody,
+  TableDataCell,
+  TableHeader,
+  TableHeaderCell,
+  TableRow,
+} from '@navikt/ds-react/Table'
 
 interface OppgaveListeProps {
   oppgaver: Oppgave[]
@@ -27,32 +34,30 @@ function formatDato(iso: string): string {
 }
 
 export default function OppgaveListe({ oppgaver }: OppgaveListeProps) {
-  if (oppgaver.length === 0) {
-    return <Alert variant="info">Ingen oppgaver for denne enheten.</Alert>
-  }
-
   return (
     <Table>
-      <Table.Header>
-        <Table.Row>
-          <Table.HeaderCell scope="col">Tittel</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Status</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Opprettet av</Table.HeaderCell>
-          <Table.HeaderCell scope="col">Opprettet</Table.HeaderCell>
-        </Table.Row>
-      </Table.Header>
-      <Table.Body>
+      <TableHeader>
+        <TableRow>
+          <TableHeaderCell scope="col">Person-id</TableHeaderCell>
+          <TableHeaderCell scope="col">Tittel</TableHeaderCell>
+          <TableHeaderCell scope="col">Status</TableHeaderCell>
+          <TableHeaderCell scope="col">Opprettet av</TableHeaderCell>
+          <TableHeaderCell scope="col">Opprettet</TableHeaderCell>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {oppgaver.map((oppgave) => (
-          <Table.Row key={oppgave.id}>
-            <Table.DataCell>{oppgave.tittel}</Table.DataCell>
-            <Table.DataCell>
+          <TableRow key={oppgave.id}>
+            <TableDataCell>{oppgave.personId}</TableDataCell>
+            <TableDataCell>{oppgave.tittel}</TableDataCell>
+            <TableDataCell>
               <StatusTag status={oppgave.status} />
-            </Table.DataCell>
-            <Table.DataCell>{oppgave.opprettetAv}</Table.DataCell>
-            <Table.DataCell>{formatDato(oppgave.opprettetAt)}</Table.DataCell>
-          </Table.Row>
+            </TableDataCell>
+            <TableDataCell>{oppgave.opprettetAv}</TableDataCell>
+            <TableDataCell>{formatDato(oppgave.opprettetAt)}</TableDataCell>
+          </TableRow>
         ))}
-      </Table.Body>
+      </TableBody>
     </Table>
   )
 }

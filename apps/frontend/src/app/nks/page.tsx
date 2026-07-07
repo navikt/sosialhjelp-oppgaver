@@ -1,28 +1,64 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { getToken, validateAzureToken } from '@navikt/oasis'
-import ScopeNav from '@/components/ScopeNav'
 import OppgaveForm from '@/components/OppgaveForm'
+import { createOppgave, getOppgaver, OpprettOppgaveRequest } from '@/lib/api'
+import { InlineMessage, VStack } from '@navikt/ds-react'
+import OppgaveListe from '@/components/OppgaveListe'
+
+const skipAuth = process.env['SKIP_AUTH'] === 'true'
 
 export default async function NksPage() {
-  const headersList = await headers()
-  const token = getToken(headersList)
+  let token: string | undefined
 
-  if (!token) {
-    redirect('/ingen-tilgang')
+  if (skipAuth) {
+    token = 'local-dev-token'
+  } else {
+    const headersList = await headers()
+    token = getToken(headersList) ?? undefined
+
+    if (!token) {
+      redirect('/ingen-tilgang')
+    }
+
+    const validation = await validateAzureToken(token)
+    if (!validation.ok) {
+      redirect('/ingen-tilgang')
+    }
   }
 
-  const validation = await validateAzureToken(token)
-  if (!validation.ok) {
-    redirect('/ingen-tilgang')
+  async function opprettOppgave(data: Omit<OpprettOppgaveRequest, 'personId'>) {
+    'use server'
+    return createOppgave(token!, data)
   }
 
   return (
-    <>
-      <ScopeNav />
-      <main className="mx-auto max-w-2xl px-4 py-8">
-        <OppgaveForm token={token} />
-      </main>
-    </>
+    <VStack gap="space-20" className="mt-20">
+      <NksOppgaveListe token={token} />
+      <OppgaveForm opprettOppgave={opprettOppgave} />
+    </VStack>
   )
+}
+
+const NksOppgaveListe = async ({ token }: { token: string }) => {
+  async function hentOppgaver() {
+    'use server'
+    return getOppgaver(token!)
+  }
+
+  const response = await hentOppgaver()
+
+  if ('error' in response) {
+    return (
+      <InlineMessage status="error">
+        Kunne ikke hente oppgaver: {response.error.message}
+      </InlineMessage>
+    )
+  }
+  const oppgaver = response.oppgaver
+  if (oppgaver.length === 0) {
+    return <InlineMessage status="info">Ingen oppgaver for brukeren</InlineMessage>
+  }
+  console.log(oppgaver)
+  return <OppgaveListe oppgaver={oppgaver} />
 }

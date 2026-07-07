@@ -13,12 +13,12 @@ fun main(args: Array<String>) = EngineMain.main(args)
 
 fun Application.appModule() {
     val config = AppConfig.from(environment.config)
-    val database = Database(config.database)
-    val oppgaveRepository = OppgaveRepository(database)
+    Database(config.database)
+    val oppgaveRepository = OppgaveRepository
     val oppgaveService = OppgaveService(oppgaveRepository)
 
-    configureAuth(config.auth)
+    if (!config.auth.skipAuth) configureAuth(config.auth)
     configureSerialization()
     configureMonitoring()
-    configureRouting(oppgaveService)
+    configureRouting(oppgaveService, skipAuth = config.auth.skipAuth)
 }

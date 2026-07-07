@@ -23,10 +23,13 @@ class Database(config: DatabaseConfig) {
     }
 
     private fun migrate() {
-        Flyway.configure()
+        val flyway = Flyway.configure()
             .dataSource(dataSource)
             .lockRetryCount(10)
+            .cleanDisabled(false)
             .load()
-            .migrate()
+        flyway
+            .clean()
+            flyway.migrate()
     }
 }

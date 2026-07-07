@@ -31,6 +31,7 @@ data class Oppgave(
     val tittel: String,
     val beskrivelse: String,
     val opprettetAv: String,
+    val personId: String,
     val enhet: String,
     val status: OppgaveStatus,
     @Serializable(with = InstantSerializer::class)
@@ -44,9 +45,15 @@ data class OpprettOppgaveRequest(
     val tittel: String,
     val beskrivelse: String,
     val enhet: String,
+    val personId: String,
 )
 
 @Serializable
 data class OppdaterStatusRequest(
     val status: OppgaveStatus,
+)
+
+@Serializable
+data class GetOppgaverResponse(
+    val personId: String,
 )

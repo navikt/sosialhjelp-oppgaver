@@ -9,7 +9,7 @@ import io.ktor.server.routing.*
 import no.nav.sosialhjelp.oppgaver.oppgave.OppgaveService
 import no.nav.sosialhjelp.oppgaver.oppgave.oppgaveRoutes
 
-fun Application.configureRouting(oppgaveService: OppgaveService) {
+fun Application.configureRouting(oppgaveService: OppgaveService, skipAuth: Boolean = false) {
     install(StatusPages) {
         exception<IllegalArgumentException> { call, cause ->
             call.respond(HttpStatusCode.BadRequest, mapOf("melding" to (cause.message ?: "Ugyldig forespørsel")))
@@ -26,8 +26,12 @@ fun Application.configureRouting(oppgaveService: OppgaveService) {
         get("/isalive") { call.respond(HttpStatusCode.OK, "OK") }
         get("/isready") { call.respond(HttpStatusCode.OK, "OK") }
 
-        authenticate(AUTH_ENTRA_ID) {
-            oppgaveRoutes(oppgaveService)
+        if (skipAuth) {
+            oppgaveRoutes(oppgaveService, skipAuth = true)
+        } else {
+            authenticate(AUTH_ENTRA_ID) {
+                oppgaveRoutes(oppgaveService)
+            }
         }
     }
 }

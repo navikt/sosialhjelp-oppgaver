@@ -9,20 +9,38 @@ import io.ktor.server.routing.*
 import no.nav.sosialhjelp.oppgaver.ktor.requireScope
 import kotlin.uuid.Uuid
 
-fun Route.oppgaveRoutes(oppgaveService: OppgaveService) {
+fun Route.oppgaveRoutes(oppgaveService: OppgaveService, skipAuth: Boolean = false) {
     route("/api/oppgaver") {
         post {
-            call.requireScope("nks")
-            val principal = call.principal<JWTPrincipal>()!!
-            val navIdent = principal.payload.getClaim("NAVident").asString()
-                ?: throw IllegalArgumentException("NAVident mangler i token")
+            if (!skipAuth) call.requireScope("nks")
+            val navIdent = if (skipAuth) {
+                "local-dev"
+            } else {
+                val principal = call.principal<JWTPrincipal>()!!
+                principal.payload.getClaim("NAVident").asString()
+                    ?: throw IllegalArgumentException("NAVident mangler i token")
+            }
             val request = call.receive<OpprettOppgaveRequest>()
             val oppgave = oppgaveService.opprettOppgave(request, navIdent)
             call.respond(HttpStatusCode.Created, oppgave)
         }
 
+        post("/sok") {
+            if (!skipAuth) call.requireScope("nks")
+            val navIdent = if (skipAuth) {
+                "local-dev"
+            } else {
+                val principal = call.principal<JWTPrincipal>()!!
+                principal.payload.getClaim("NAVident").asString()
+                    ?: throw IllegalArgumentException("NAVident mangler i token")
+            }
+            val request = call.receive<GetOppgaverResponse>()
+            val oppgaver = oppgaveService.hentOppgaverForPerson(request.personId)
+            call.respond(HttpStatusCode.Created, oppgaver)
+        }
+
         get {
-            call.requireScope("navkontor")
+            if (!skipAuth) call.requireScope("navkontor")
             val enhet = call.request.queryParameters["enhet"]
                 ?: throw IllegalArgumentException("enhet er påkrevd")
             val oppgaver = oppgaveService.hentOppgaverForEnhet(enhet)
@@ -30,7 +48,7 @@ fun Route.oppgaveRoutes(oppgaveService: OppgaveService) {
         }
 
         get("/{id}") {
-            call.requireScope("navkontor")
+            if (!skipAuth) call.requireScope("navkontor")
             val id = call.parameters["id"]?.let { Uuid.parse(it) }
                 ?: throw IllegalArgumentException("Ugyldig id")
             val oppgave = oppgaveService.hentOppgave(id)
@@ -38,7 +56,7 @@ fun Route.oppgaveRoutes(oppgaveService: OppgaveService) {
         }
 
         patch("/{id}") {
-            call.requireScope("navkontor")
+            if (!skipAuth) call.requireScope("navkontor")
             val id = call.parameters["id"]?.let { Uuid.parse(it) }
                 ?: throw IllegalArgumentException("Ugyldig id")
             val request = call.receive<OppdaterStatusRequest>()
