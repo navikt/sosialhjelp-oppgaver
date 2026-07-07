@@ -6,11 +6,11 @@ metadata:
   labels:
     team: teamdigisos
 spec:
-  image: { { image } }
+  image: {{ image }}
   port: 3000
 
   ingresses:
-    - https://www.ansatt.nav.no/sosialhjelp/oppgaver
+    - https://www.ansatt.dev.nav.no/sosialhjelp/oppgaver
 
   liveness:
     path: /isalive
@@ -37,11 +37,10 @@ spec:
   azure:
     application:
       enabled: true
-
-  wonderwall:
-    enabled: true
-    logoutRedirectURL: /
-    autoLogin: true
+      allowAllUsers: true
+    sidecar:
+      enabled: true
+      autoLogin: true
 
   accessPolicy:
     outbound:
