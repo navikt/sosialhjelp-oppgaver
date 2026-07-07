@@ -1,6 +1,7 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Alert, Box, Heading, InlineMessage } from '@navikt/ds-react'
+import { Box, Heading, InlineMessage } from '@navikt/ds-react'
+import { LocalAlert, LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
 import { getToken, validateAzureToken } from '@navikt/oasis'
 import { fetchOppgaver } from '@/lib/api'
 import OppgaveListe from '@/components/OppgaveListe'
@@ -39,7 +40,12 @@ async function NavkontorPage() {
       </Heading>
 
       {'error' in result ? (
-        <Alert variant="error">{result.error.message}</Alert>
+        <LocalAlert status="error">
+          <LocalAlertHeader>
+            <LocalAlertTitle as="h2">Kunne ikke hente oppgaver</LocalAlertTitle>
+          </LocalAlertHeader>
+          <LocalAlertContent>{result.error.message}</LocalAlertContent>
+        </LocalAlert>
       ) : (
         <NavKontorOppgaveListe oppgaver={result.oppgaver} />
       )}

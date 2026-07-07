@@ -11,7 +11,7 @@ class OppgaveService(private val repository: OppgaveRepository) {
         require(request.tittel.isNotBlank()) { "Tittel kan ikke være tom" }
         require(request.enhet.isNotBlank()) { "Enhet kan ikke være tom" }
         require(request.beskrivelse.isNotBlank()) { "Beskrivelse kan ikke være tom" }
-        require(request.personId.isNotBlank()) { "Beskrivelse kan ikke være tom" }
+        require(request.personId.isNotBlank()) { "PersonId kan ikke være tom" }
 
         val now = Instant.now()
         val oppgave = Oppgave(

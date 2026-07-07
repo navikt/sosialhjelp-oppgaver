@@ -1,8 +1,9 @@
 import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 import { getToken, validateAzureToken } from '@navikt/oasis'
 import OppgaveForm from '@/components/OppgaveForm'
-import { createOppgave, getOppgaver, OpprettOppgaveRequest } from '@/lib/api'
+import { createOppgave, getOppgaver, Oppgave, ApiError, OpprettOppgaveRequest } from '@/lib/api'
 import { InlineMessage, VStack } from '@navikt/ds-react'
 import OppgaveListe from '@/components/OppgaveListe'
 
@@ -27,9 +28,23 @@ export default async function NksPage() {
     }
   }
 
-  async function opprettOppgave(data: Omit<OpprettOppgaveRequest, 'personId'>) {
+  async function opprettOppgave(
+    _prevState: { oppgave: Oppgave } | { error: ApiError } | null,
+    formData: FormData,
+  ) {
     'use server'
-    return createOppgave(token!, data)
+
+    const { tittel, beskrivelse, enhet } = Object.fromEntries(formData) as unknown as Omit<
+      OpprettOppgaveRequest,
+      'personId'
+    >
+
+    const result = await createOppgave(token!, { tittel, beskrivelse, enhet })
+    console.log(result)
+    if ('oppgave' in result) {
+      revalidatePath('/nks')
+    }
+    return result
   }
 
   return (
@@ -59,6 +74,5 @@ const NksOppgaveListe = async ({ token }: { token: string }) => {
   if (oppgaver.length === 0) {
     return <InlineMessage status="info">Ingen oppgaver for brukeren</InlineMessage>
   }
-  console.log(oppgaver)
   return <OppgaveListe oppgaver={oppgaver} />
 }

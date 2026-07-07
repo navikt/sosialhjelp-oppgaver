@@ -1,47 +1,23 @@
 'use client'
 
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { Alert, Button, Heading, Textarea, TextField, VStack } from '@navikt/ds-react'
-import type { OpprettOppgaveRequest, Oppgave, ApiError } from '@/lib/api'
+import { useActionState, useEffect, useRef } from 'react'
+import { Button, Heading, InlineMessage, Textarea, TextField, VStack } from '@navikt/ds-react'
+import {
+  LocalAlert,
+  LocalAlertContent,
+  LocalAlertHeader,
+  LocalAlertTitle,
+} from '@navikt/ds-react/LocalAlert'
+import type { Oppgave, ApiError } from '@/lib/api'
 
-interface FormValues {
-  tittel: string
-  beskrivelse: string
-  enhet: string
-}
+type ActionState = { oppgave: Oppgave } | { error: ApiError } | null
 
 interface OppgaveFormProps {
-  opprettOppgave: (
-    data: Omit<OpprettOppgaveRequest, 'personId'>,
-  ) => Promise<{ oppgave: Oppgave } | { error: ApiError }>
+  opprettOppgave: (prevState: ActionState, formData: FormData) => Promise<ActionState>
 }
 
 export default function OppgaveForm({ opprettOppgave }: OppgaveFormProps) {
-  const [success, setSuccess] = useState(false)
-  const [apiError, setApiError] = useState<string | null>(null)
-
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors, isSubmitting },
-  } = useForm<FormValues>()
-
-  async function onSubmit(data: FormValues) {
-    setSuccess(false)
-    setApiError(null)
-
-    const result = await opprettOppgave(data)
-
-    if ('error' in result) {
-      setApiError(result.error.message)
-      return
-    }
-
-    setSuccess(true)
-    reset()
-  }
+  const [state, formAction, pending] = useActionState(opprettOppgave, null)
 
   return (
     <VStack gap="space-24">
@@ -49,47 +25,46 @@ export default function OppgaveForm({ opprettOppgave }: OppgaveFormProps) {
         Opprett oppgave
       </Heading>
 
-      {success && (
-        <Alert variant="success">Oppgaven ble opprettet og sendt til Nav-kontoret.</Alert>
+      {state && 'oppgave' in state && (
+        <InlineMessage status="success">
+          Oppgaven ble opprettet og sendt til Nav-kontoret.
+        </InlineMessage>
+      )}
+      {state && 'error' in state && (
+        <LocalAlert status="error">
+          <LocalAlertHeader>
+            <LocalAlertTitle as="h2">Feil ved innsending</LocalAlertTitle>
+          </LocalAlertHeader>
+          <LocalAlertContent>{state.error.message}</LocalAlertContent>
+        </LocalAlert>
       )}
 
-      {apiError && <Alert variant="error">{apiError}</Alert>}
-
-      <form onSubmit={handleSubmit(onSubmit)} noValidate>
+      <form action={formAction}>
         <VStack gap="space-16">
           <TextField
             label="Tittel"
             description="Kort beskrivelse av oppgaven"
-            error={errors.tittel?.message}
-            {...register('tittel', {
-              required: 'Tittel er påkrevd',
-              maxLength: { value: 200, message: 'Tittel kan ikke være lengre enn 200 tegn' },
-            })}
+            name="tittel"
+            required
+            maxLength={200}
           />
 
           <Textarea
             label="Beskrivelse"
             description="Detaljert beskrivelse av oppgaven"
-            error={errors.beskrivelse?.message}
-            {...register('beskrivelse', {
-              required: 'Beskrivelse er påkrevd',
-            })}
+            name="beskrivelse"
+            required
           />
 
           <TextField
             label="Enhetsnummer"
             description="Nav-kontorets 4-sifrede enhetsnummer"
-            error={errors.enhet?.message}
-            {...register('enhet', {
-              required: 'Enhetsnummer er påkrevd',
-              pattern: {
-                value: /^\d{4}$/,
-                message: 'Enhetsnummer må være 4 siffer',
-              },
-            })}
+            name="enhet"
+            required
+            pattern="\d{4}"
           />
 
-          <Button type="submit" loading={isSubmitting}>
+          <Button type="submit" loading={pending}>
             Send oppgave
           </Button>
         </VStack>

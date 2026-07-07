@@ -1,4 +1,4 @@
-import { Alert, Table, Tag } from '@navikt/ds-react'
+import { Table, Tag } from '@navikt/ds-react'
 import type { Oppgave, OppgaveStatus } from '@/lib/api'
 import {
   TableBody,
