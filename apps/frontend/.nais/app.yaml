@@ -52,7 +52,7 @@ spec:
     - name: BACKEND_URL
       value: http://sosialhjelp-oppgaver-api
     - name: BACKEND_AUDIENCE
-      value: api://prod-gcp.teamdigisos.sosialhjelp-oppgaver-api/.default
+      value: api://dev-gcp.teamdigisos.sosialhjelp-oppgaver-api/.default
     # TODO: Erstatt med ansatt→enhet-mapping når den er på plass
     - name: HARDCODED_ENHET
       value: '0301'
