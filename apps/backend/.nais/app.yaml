@@ -32,7 +32,7 @@ spec:
   accessPolicy:
     inbound:
       rules:
-        - application: sosialhjelp-oppgaver-frontend
+        - application: sosialhjelp-oppgaver
           namespace: teamdigisos
           permissions:
             scopes:
@@ -44,6 +44,4 @@ spec:
         databases:
           - name: sosialhjelp-oppgaver
             envVarPrefix: DB
-  env:
-    - name: DB_JDBC_URL
-      value: jdbc:postgresql:///${DB_DATABASE}
+

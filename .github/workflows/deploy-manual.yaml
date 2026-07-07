@@ -1,37 +1,28 @@
-name: Deploy
+name: Deploy (manual)
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      app:
+        description: Which app to deploy
+        required: true
+        type: choice
+        options:
+          - backend
+          - frontend
+          - both
+      image:
+        description: "Image tag to deploy (e.g. sha-abc1234). Leave blank to build from HEAD."
+        required: false
+        type: string
 
 permissions:
   contents: read
   id-token: write
 
-concurrency:
-  group: deploy-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: dorny/paths-filter@v4
-        id: filter
-        with:
-          filters: |
-            backend:
-              - 'apps/backend/**'
-            frontend:
-              - 'apps/frontend/**'
-
   build-backend:
-    needs: changes
-    if: needs.changes.outputs.backend == 'true'
+    if: (inputs.app == 'backend' || inputs.app == 'both') && inputs.image == ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -59,7 +50,11 @@ jobs:
           docker_context: apps/backend
 
   deploy-backend:
-    needs: build-backend
+    needs: [build-backend]
+    if: |
+      always() &&
+      (inputs.app == 'backend' || inputs.app == 'both') &&
+      (needs.build-backend.result == 'success' || needs.build-backend.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -69,11 +64,10 @@ jobs:
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/backend/.nais/app.yaml
-          VAR: image=${{ needs.build-backend.outputs.image }}
+          VAR: image=${{ inputs.image || needs.build-backend.outputs.image }}
 
   build-frontend:
-    needs: changes
-    if: needs.changes.outputs.frontend == 'true'
+    if: (inputs.app == 'frontend' || inputs.app == 'both') && inputs.image == ''
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -105,14 +99,18 @@ jobs:
           docker_context: apps/frontend
 
   deploy-frontend:
-    needs: build-frontend
+    needs: [build-frontend]
+    if: |
+      always() &&
+      (inputs.app == 'frontend' || inputs.app == 'both') &&
+      (needs.build-frontend.result == 'success' || needs.build-frontend.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7 # v4.1.1
 
       - uses: nais/deploy/actions/deploy@v2
         env:
           CLUSTER: dev-gcp
           RESOURCE: apps/frontend/.nais/app.yaml
-          VAR: image=${{ needs.build-frontend.outputs.image }}
+          VAR: image=${{ inputs.image || needs.build-frontend.outputs.image }}

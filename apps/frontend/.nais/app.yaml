@@ -1,16 +1,16 @@
 apiVersion: nais.io/v1alpha1
 kind: Application
 metadata:
-  name: sosialhjelp-oppgaver-frontend
+  name: sosialhjelp-oppgaver
   namespace: teamdigisos
   labels:
     team: teamdigisos
 spec:
-  image: {{ image }}
+  image: { { image } }
   port: 3000
 
   ingresses:
-    - https://sosialhjelp-oppgaver.intern.nav.no
+    - https://www.ansatt.nav.no/sosialhjelp/oppgaver
 
   liveness:
     path: /isalive
@@ -56,4 +56,4 @@ spec:
       value: api://prod-gcp.teamdigisos.sosialhjelp-oppgaver-api/.default
     # TODO: Erstatt med ansatt→enhet-mapping når den er på plass
     - name: HARDCODED_ENHET
-      value: "0301"
+      value: '0301'
