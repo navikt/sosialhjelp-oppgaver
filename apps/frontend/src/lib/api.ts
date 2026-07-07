@@ -1,4 +1,5 @@
 import { requestAzureOboToken } from '@navikt/oasis'
+import { logger } from '@navikt/next-logger'
 
 const backendUrl = process.env['BACKEND_URL'] ?? 'http://localhost:8083'
 const backendAudience = process.env['BACKEND_AUDIENCE']
@@ -21,10 +22,6 @@ export interface OpprettOppgaveRequest {
   beskrivelse: string
   personId: string
   enhet: string
-}
-
-export interface HentOppgaverRequest {
-  personId: string
 }
 
 export interface ApiError {
@@ -58,7 +55,8 @@ export async function fetchOppgaver(
   let token: string
   try {
     token = await exchangeToken(incomingToken)
-  } catch {
+  } catch (e: unknown) {
+    logger.error(e, 'Failed to exchange token')
     return { error: { message: 'Autentisering feilet', status: 401 } }
   }
 
@@ -83,7 +81,8 @@ export async function createOppgave(
   let token: string
   try {
     token = await exchangeToken(incomingToken)
-  } catch {
+  } catch (e: unknown) {
+    logger.error(e, 'Failed to exchange token')
     return { error: { message: 'Autentisering feilet', status: 401 } }
   }
   const response = await fetch(`${backendUrl}/api/oppgaver`, {
@@ -109,7 +108,8 @@ export async function getOppgaver(
   let token: string
   try {
     token = await exchangeToken(incomingToken)
-  } catch {
+  } catch (e: unknown) {
+    logger.error(e, 'Failed to exchange token')
     return { error: { message: 'Autentisering feilet', status: 401 } }
   }
   const response = await fetch(`${backendUrl}/api/oppgaver/sok`, {
