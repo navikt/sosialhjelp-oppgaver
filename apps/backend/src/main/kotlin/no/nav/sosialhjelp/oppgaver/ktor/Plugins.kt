@@ -34,7 +34,7 @@ fun Application.configureMonitoring() {
 
     install(CallLogging) {
         level = Level.INFO
-        filter { call -> !call.request.local.uri.startsWith("/is") }
+        filter { call -> !call.request.local.uri.startsWith("/is") && !call.request.local.uri.startsWith("/metrics") }
     }
 
     routing {
