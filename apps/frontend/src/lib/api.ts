@@ -9,6 +9,7 @@ export type OppgaveStatus = 'NY' | 'UNDER_BEHANDLING' | 'FERDIG'
 export interface Oppgave {
   id: string
   tittel: string
+  beskrivelse: string
   opprettetAv: string
   personId: string
   enhet: string

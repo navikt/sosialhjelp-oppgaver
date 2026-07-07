@@ -40,6 +40,7 @@ export default function OppgaveListe({ oppgaver }: OppgaveListeProps) {
         <TableRow>
           <TableHeaderCell scope="col">Person-id</TableHeaderCell>
           <TableHeaderCell scope="col">Tittel</TableHeaderCell>
+          <TableHeaderCell scope="col">Beskrivelse</TableHeaderCell>
           <TableHeaderCell scope="col">Status</TableHeaderCell>
           <TableHeaderCell scope="col">Opprettet av</TableHeaderCell>
           <TableHeaderCell scope="col">Opprettet</TableHeaderCell>
@@ -50,6 +51,7 @@ export default function OppgaveListe({ oppgaver }: OppgaveListeProps) {
           <TableRow key={oppgave.id}>
             <TableDataCell>{oppgave.personId}</TableDataCell>
             <TableDataCell>{oppgave.tittel}</TableDataCell>
+            <TableDataCell>{oppgave.beskrivelse}</TableDataCell>
             <TableDataCell>
               <StatusTag status={oppgave.status} />
             </TableDataCell>
