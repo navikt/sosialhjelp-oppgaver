@@ -1,7 +1,7 @@
 package no.nav.sosialhjelp.oppgaver
 
-import io.ktor.server.application.*
-import io.ktor.server.netty.*
+import io.ktor.server.application.Application
+import io.ktor.server.netty.EngineMain
 import no.nav.sosialhjelp.oppgaver.ktor.configureAuth
 import no.nav.sosialhjelp.oppgaver.ktor.configureMonitoring
 import no.nav.sosialhjelp.oppgaver.ktor.configureRouting

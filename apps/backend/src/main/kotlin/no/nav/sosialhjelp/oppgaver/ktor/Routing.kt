@@ -1,15 +1,23 @@
 package no.nav.sosialhjelp.oppgaver.ktor
 
-import io.ktor.http.*
-import io.ktor.server.application.*
-import io.ktor.server.auth.*
-import io.ktor.server.plugins.statuspages.*
-import io.ktor.server.response.*
-import io.ktor.server.routing.*
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.Application
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.install
+import io.ktor.server.auth.authenticate
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.principal
+import io.ktor.server.plugins.statuspages.StatusPages
+import io.ktor.server.response.respond
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 import no.nav.sosialhjelp.oppgaver.oppgave.OppgaveService
 import no.nav.sosialhjelp.oppgaver.oppgave.oppgaveRoutes
 
-fun Application.configureRouting(oppgaveService: OppgaveService, skipAuth: Boolean = false) {
+fun Application.configureRouting(
+    oppgaveService: OppgaveService,
+    skipAuth: Boolean = false,
+) {
     install(StatusPages) {
         exception<IllegalArgumentException> { call, cause ->
             call.respond(HttpStatusCode.BadRequest, mapOf("melding" to (cause.message ?: "Ugyldig forespørsel")))
@@ -39,6 +47,6 @@ fun Application.configureRouting(oppgaveService: OppgaveService, skipAuth: Boole
 class ForbiddenException : RuntimeException()
 
 fun ApplicationCall.requireScope(scope: String) {
-    val principal = principal<io.ktor.server.auth.jwt.JWTPrincipal>() ?: throw ForbiddenException()
+    val principal = principal<JWTPrincipal>() ?: throw ForbiddenException()
     if (!principal.hasScope(scope)) throw ForbiddenException()
 }

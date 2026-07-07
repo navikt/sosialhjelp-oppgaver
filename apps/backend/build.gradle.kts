@@ -55,7 +55,6 @@ dependencies {
     testImplementation(libs.mock.oauth2.server)
 }
 
-
 tasks {
     test {
         useJUnitPlatform()

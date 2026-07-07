@@ -13,7 +13,10 @@ import kotlin.uuid.Uuid
 object InstantSerializer : KSerializer<Instant> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Instant", PrimitiveKind.STRING)
 
-    override fun serialize(encoder: Encoder, value: Instant) = encoder.encodeString(value.toString())
+    override fun serialize(
+        encoder: Encoder,
+        value: Instant,
+    ) = encoder.encodeString(value.toString())
 
     override fun deserialize(decoder: Decoder): Instant = Instant.parse(decoder.decodeString())
 }

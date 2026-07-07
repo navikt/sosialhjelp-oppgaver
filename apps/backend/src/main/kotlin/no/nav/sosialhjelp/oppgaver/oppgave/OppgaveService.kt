@@ -5,26 +5,29 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class OppgaveService(private val repository: OppgaveRepository) {
-
     @OptIn(ExperimentalUuidApi::class)
-    fun opprettOppgave(request: OpprettOppgaveRequest, navIdent: String): Oppgave {
+    fun opprettOppgave(
+        request: OpprettOppgaveRequest,
+        navIdent: String,
+    ): Oppgave {
         require(request.tittel.isNotBlank()) { "Tittel kan ikke være tom" }
         require(request.enhet.isNotBlank()) { "Enhet kan ikke være tom" }
         require(request.beskrivelse.isNotBlank()) { "Beskrivelse kan ikke være tom" }
         require(request.personId.isNotBlank()) { "PersonId kan ikke være tom" }
 
         val now = Instant.now()
-        val oppgave = Oppgave(
-            id = Uuid.generateV4(),
-            tittel = request.tittel,
-            beskrivelse = request.beskrivelse,
-            opprettetAv = navIdent,
-            personId = request.personId,
-            enhet = request.enhet,
-            status = OppgaveStatus.NY,
-            opprettetAt = now,
-            oppdatertAt = now,
-        )
+        val oppgave =
+            Oppgave(
+                id = Uuid.generateV4(),
+                tittel = request.tittel,
+                beskrivelse = request.beskrivelse,
+                opprettetAv = navIdent,
+                personId = request.personId,
+                enhet = request.enhet,
+                status = OppgaveStatus.NY,
+                opprettetAt = now,
+                oppdatertAt = now,
+            )
         return repository.lagre(oppgave)
     }
 
@@ -33,10 +36,12 @@ class OppgaveService(private val repository: OppgaveRepository) {
         return repository.hentForEnhet(enhet)
     }
 
-    fun hentOppgave(id: Uuid): Oppgave =
-        repository.hentEn(id) ?: throw NoSuchElementException("Oppgave $id ikke funnet")
+    fun hentOppgave(id: Uuid): Oppgave = repository.hentEn(id) ?: throw NoSuchElementException("Oppgave $id ikke funnet")
 
-    fun oppdaterStatus(id: Uuid, status: OppgaveStatus): Oppgave {
+    fun oppdaterStatus(
+        id: Uuid,
+        status: OppgaveStatus,
+    ): Oppgave {
         repository.hentEn(id) ?: throw NoSuchElementException("Oppgave $id ikke funnet")
         return repository.oppdaterStatus(id, status, Instant.now())
             ?: throw NoSuchElementException("Oppgave $id ikke funnet")
@@ -45,6 +50,5 @@ class OppgaveService(private val repository: OppgaveRepository) {
     fun hentOppgaverForPerson(personId: String): List<Oppgave> {
         require(personId.isNotBlank()) { "PersonId kan ikke være tom" }
         return repository.hentForPersonId(personId)
-
     }
 }

@@ -6,16 +6,18 @@ import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.v1.jdbc.Database
 
 class Database(config: DatabaseConfig) {
-
-    val dataSource: HikariDataSource = HikariDataSource(HikariConfig().apply {
-        jdbcUrl = config.jdbcUrl
-        username = config.username
-        password = config.password
-        maximumPoolSize = 3
-        idleTimeout = 300_000
-        maxLifetime = 1_800_000
-        initializationFailTimeout = 60_000
-    })
+    val dataSource: HikariDataSource =
+        HikariDataSource(
+            HikariConfig().apply {
+                jdbcUrl = config.jdbcUrl
+                username = config.username
+                password = config.password
+                maximumPoolSize = 3
+                idleTimeout = 300_000
+                maxLifetime = 1_800_000
+                initializationFailTimeout = 60_000
+            },
+        )
 
     init {
         migrate()
@@ -23,13 +25,14 @@ class Database(config: DatabaseConfig) {
     }
 
     private fun migrate() {
-        val flyway = Flyway.configure()
-            .dataSource(dataSource)
-            .lockRetryCount(10)
-            .cleanDisabled(false)
-            .load()
+        val flyway =
+            Flyway.configure()
+                .dataSource(dataSource)
+                .lockRetryCount(10)
+                .cleanDisabled(false)
+                .load()
         flyway
             .clean()
-            flyway.migrate()
+        flyway.migrate()
     }
 }
