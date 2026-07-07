@@ -40,7 +40,6 @@ export default async function NksPage() {
     >
 
     const result = await createOppgave(token!, { tittel, beskrivelse, enhet })
-    console.log(result)
     if ('oppgave' in result) {
       revalidatePath('/nks')
     }

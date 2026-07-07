@@ -13,10 +13,10 @@ spec:
     - https://www.ansatt.dev.nav.no/sosialhjelp/oppgaver
 
   liveness:
-    path: /isalive
+    path: /sosialhjelp/oppgaver/isalive
     initialDelay: 10
   readiness:
-    path: /isready
+    path: /sosialhjelp/oppgaver/isready
     initialDelay: 10
 
   prometheus:
