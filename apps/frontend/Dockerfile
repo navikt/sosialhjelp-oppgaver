@@ -1,7 +1,4 @@
 FROM europe-north1-docker.pkg.dev/cgr-nav/pull-through/nav.no/node:22-dev AS base
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
 
 FROM base AS deps
 WORKDIR /app
