@@ -6,27 +6,10 @@ import OppgaveForm from '@/components/OppgaveForm'
 import { createOppgave, Oppgave, ApiError, OpprettOppgaveRequest } from '@/lib/api'
 import { VStack } from '@navikt/ds-react'
 import NksOppgaveListe from '@/components/NksOppgaveListe'
-
-const skipAuth = process.env['SKIP_AUTH'] === 'true'
+import { authenticate } from '@/lib/auth'
 
 export default async function NksPage() {
-  let token: string | undefined
-
-  if (skipAuth) {
-    token = 'local-dev-token'
-  } else {
-    const headersList = await headers()
-    token = getToken(headersList) ?? undefined
-
-    if (!token) {
-      redirect('/ingen-tilgang')
-    }
-
-    const validation = await validateAzureToken(token)
-    if (!validation.ok) {
-      redirect('/ingen-tilgang')
-    }
-  }
+  const token = await authenticate()
 
   async function opprettOppgave(
     _prevState: { oppgave: Oppgave } | { error: ApiError } | null,
@@ -38,7 +21,7 @@ export default async function NksPage() {
       formData,
     ) as unknown as Omit<OpprettOppgaveRequest, 'personId'>
 
-    const result = await createOppgave(token!, { tittel, beskrivelse, enhet, prioritet })
+    const result = await createOppgave(token, { tittel, beskrivelse, enhet, prioritet })
     if ('oppgave' in result) {
       revalidatePath('/nks')
     }
