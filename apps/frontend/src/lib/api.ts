@@ -1,5 +1,5 @@
-import { requestAzureOboToken } from '@navikt/oasis'
 import { logger } from '@navikt/next-logger'
+import { exchangeToken } from '@/lib/auth'
 
 const backendUrl = process.env['BACKEND_URL'] ?? 'http://localhost:8083'
 const backendAudience = process.env['BACKEND_AUDIENCE']
@@ -33,32 +33,13 @@ export interface ApiError {
   status: number
 }
 
-/**
- * Gjør OBO-exchange via @navikt/oasis. Oasis cacher tokens automatisk.
- *
- * Lokalt (uten BACKEND_AUDIENCE) returneres inngangstokenet uendret —
- * mock-oauth2-server utsteder tokens som backend godtar direkte.
- */
-async function exchangeToken(incomingToken: string): Promise<string> {
-  if (!backendAudience) {
-    return incomingToken
-  }
-
-  const result = await requestAzureOboToken(incomingToken, backendAudience)
-  if (!result.ok) {
-    throw result.error
-  }
-
-  return result.token
-}
-
 export async function fetchOppgaver(
-  incomingToken: string,
+  token: string,
   enhet: string,
 ): Promise<{ oppgaver: Oppgave[] } | { error: ApiError }> {
-  let token: string
+  let exhangedToken: string
   try {
-    token = await exchangeToken(incomingToken)
+    exhangedToken = await exchangeToken(token, backendAudience)
   } catch (e: unknown) {
     logger.error(e, 'Failed to exchange token')
     return { error: { message: 'Autentisering feilet', status: 401 } }
@@ -66,7 +47,7 @@ export async function fetchOppgaver(
 
   const url = `${backendUrl}/api/oppgaver?enhet=${encodeURIComponent(enhet)}`
   const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${exhangedToken}` },
     next: { revalidate: 0 },
   })
 

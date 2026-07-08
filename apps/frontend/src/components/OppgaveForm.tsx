@@ -1,7 +1,15 @@
 'use client'
 
-import { useActionState, useEffect, useRef } from 'react'
-import { Button, Heading, InlineMessage, Select, Textarea, TextField, VStack } from '@navikt/ds-react'
+import { useActionState } from 'react'
+import {
+  Button,
+  Heading,
+  InlineMessage,
+  Select,
+  Textarea,
+  TextField,
+  VStack,
+} from '@navikt/ds-react'
 import {
   LocalAlert,
   LocalAlertContent,
@@ -9,6 +17,7 @@ import {
   LocalAlertTitle,
 } from '@navikt/ds-react/LocalAlert'
 import type { Oppgave, ApiError } from '@/lib/api'
+import { ENHETER } from '@/lib/enheter'
 
 type ActionState = { oppgave: Oppgave } | { error: ApiError } | null
 
@@ -56,13 +65,13 @@ export default function OppgaveForm({ opprettOppgave }: OppgaveFormProps) {
             required
           />
 
-          <TextField
-            label="Enhetsnummer"
-            description="Nav-kontorets 4-sifrede enhetsnummer"
-            name="enhet"
-            required
-            pattern="\d{4}"
-          />
+          <Select label="Enhetsnummer" name="enhet" required>
+            {Object.entries(ENHETER).map(([verdi, navn]) => (
+              <option key={verdi} value={verdi}>
+                {navn}
+              </option>
+            ))}
+          </Select>
 
           <Select label="Prioritet" name="prioritet" defaultValue="NORMAL">
             <option value="HØY">Høy</option>

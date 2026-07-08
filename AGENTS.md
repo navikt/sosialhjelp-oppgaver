@@ -8,12 +8,16 @@ Prosjektet er organisert som et monorepo (se [ADR-0001](docs/adr/0001-monorepo.m
 Kjør fra rotmappen med `mise`:
 
 ```bash
-mise build            # bygg backend
-mise test             # kjør tester
-mise check            # bygg + test + lint backend (inkl. ktlint)
-mise backend:dev      # start backend lokalt (port 8083)
-mise frontend:dev     # start frontend lokalt (port 3000)
+mise check            # bygg + test + lint backend og frontend
+mise test             # kjør tester for backend og frontend
+mise backend:build    # bygg backend
+mise backend:test     # kjør backend-tester
+mise backend:check    # bygg + test + lint backend (inkl. ktlint)
 mise frontend:check   # bygg + typecheck + lint + fmt:check + test frontend
+mise frontend:test    # kjør frontend-tester (Vitest)
+mise backend:dev      # start backend lokalt (port 8083)
+mise frontend:dev     # start frontend lokalt (port 3003)
+mise dev              # start backend og frontend lokalt
 ```
 
 > First time: run `gradle wrapper --gradle-version=8.12` inside `apps/backend/` to generate `gradlew` and `gradle-wrapper.jar`.
@@ -70,7 +74,7 @@ apps/
         ingen-tilgang/
           page.tsx      # Feil-side
       components/
-        ScopeNav.tsx    # Navigasjon mellom /nks og /navkontor
+        Header.tsx    # Navigasjon mellom /nks og /navkontor
         OppgaveForm.tsx # React Hook Form skjema (client component)
         OppgaveListe.tsx # Aksel Table (server component)
     Dockerfile

@@ -1,9 +1,11 @@
 import type { Metadata } from 'next'
 import { Provider } from '@navikt/ds-react/Provider'
-import './globals.css'
-import { Page } from '@navikt/ds-react'
-import ScopeNav from '@/components/ScopeNav'
 import { PageBlock } from '@navikt/ds-react/Page'
+import { Page } from '@navikt/ds-react'
+
+import './globals.css'
+
+import Header from '@/components/Header'
 
 export const metadata: Metadata = {
   title: 'Sosialhjelp-oppgaver',
@@ -16,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="icon" href="https://www.nav.no/favicon.ico" type="image/x-icon" />
       </head>
       <Page as="body">
-        <ScopeNav />
+        <Header />
         <PageBlock as="main" id="maincontent" width="xl" gutters>
           <Provider>{children}</Provider>
         </PageBlock>

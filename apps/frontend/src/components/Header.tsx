@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { InternalHeader, Spacer } from '@navikt/ds-react'
 
-export default function ScopeNav() {
+export default function Header() {
   const pathname = usePathname()
 
   return (

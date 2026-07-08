@@ -1,22 +1,38 @@
-[tasks.build]
+[tasks."backend:build"]
 run = "cd apps/backend && ./gradlew build"
 description = "Bygg backend"
 
-[tasks.test]
+[tasks."backend:test"]
 run = "cd apps/backend && ./gradlew test"
-description = "Kjør tester"
+description = "Kjør backend-tester"
 
-[tasks.check]
+[tasks."backend:check"]
 run = "cd apps/backend && ./gradlew check"
-description = "Bygg + test + lint"
+description = "Bygg + test + lint backend"
 
 [tasks."backend:dev"]
 run = "cd apps/backend && AUTH_SKIP=true ./gradlew run"
-description = "Start backend lokalt (port 8080)"
+description = "Start backend lokalt (port 8083)"
+
+[tasks."frontend:check"]
+run = "cd apps/frontend && pnpm check"
+description = "Bygg + typecheck + lint + fmt:check + test frontend"
+
+[tasks."frontend:test"]
+run = "cd apps/frontend && pnpm test"
+description = "Kjør frontend-tester (Vitest)"
 
 [tasks."frontend:dev"]
 run = "cd apps/frontend && pnpm dev --port 3003"
 description = "Start frontend lokalt (port 3003)"
+
+[tasks.check]
+depends = ["backend:check", "frontend:check"]
+description = "Bygg + test + lint backend og frontend"
+
+[tasks.test]
+depends = ["backend:test", "frontend:test"]
+description = "Kjør tester for backend og frontend"
 
 [tasks.dev]
 run = """
@@ -31,7 +47,3 @@ pnpm --prefix apps/frontend dev --port 3003 &
 wait
 """
 description = "Start backend og frontend lokalt"
-
-[tasks."frontend:check"]
-run = "cd apps/frontend && pnpm check"
-description = "Bygg + typecheck + lint + fmt:check + test frontend"

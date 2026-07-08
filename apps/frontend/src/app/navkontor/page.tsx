@@ -1,35 +1,19 @@
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { Box, Heading, InlineMessage } from '@navikt/ds-react'
-import { LocalAlert, LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
-import { getToken, validateAzureToken } from '@navikt/oasis'
+import { Box, Heading } from '@navikt/ds-react'
+import {
+  LocalAlert,
+  LocalAlertContent,
+  LocalAlertHeader,
+  LocalAlertTitle,
+} from '@navikt/ds-react/LocalAlert'
 import { fetchOppgaver } from '@/lib/api'
-import OppgaveListe from '@/components/OppgaveListe'
+import { authenticate } from '@/lib/auth'
+import NavkontorOppgaveListe from '@/components/NavkontorOppgaveListe'
 
 // TODO: Erstatt med ansatt→enhet-mapping når den er på plass
 const ENHET = process.env['HARDCODED_ENHET'] ?? '0301'
-const skipAuth = process.env['SKIP_AUTH'] === 'true'
 
 async function NavkontorPage() {
-  let token: string
-
-  if (skipAuth) {
-    token = 'local-dev-token'
-  } else {
-    const headersList = await headers()
-    const rawToken = getToken(headersList)
-
-    if (!rawToken) {
-      redirect('/ingen-tilgang')
-    }
-
-    const validation = await validateAzureToken(rawToken)
-    if (!validation.ok) {
-      redirect('/ingen-tilgang')
-    }
-
-    token = rawToken
-  }
+  const token = await authenticate()
 
   const result = await fetchOppgaver(token, ENHET)
 
@@ -47,17 +31,10 @@ async function NavkontorPage() {
           <LocalAlertContent>{result.error.message}</LocalAlertContent>
         </LocalAlert>
       ) : (
-        <NavKontorOppgaveListe oppgaver={result.oppgaver} />
+        <NavkontorOppgaveListe oppgaver={result.oppgaver} />
       )}
     </Box>
   )
-}
-
-const NavKontorOppgaveListe: typeof OppgaveListe = (props) => {
-  if (props.oppgaver.length === 0) {
-    return <InlineMessage status="info">Ingen oppgaver for denne enheten.</InlineMessage>
-  }
-  return <OppgaveListe {...props} />
 }
 
 export default NavkontorPage

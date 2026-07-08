@@ -1,4 +1,9 @@
-import { LocalAlert, LocalAlertContent, LocalAlertHeader, LocalAlertTitle } from '@navikt/ds-react/LocalAlert'
+import {
+  LocalAlert,
+  LocalAlertContent,
+  LocalAlertHeader,
+  LocalAlertTitle,
+} from '@navikt/ds-react/LocalAlert'
 import { PageBlock } from '@navikt/ds-react/Page'
 
 export default function IngenTilgangPage() {
