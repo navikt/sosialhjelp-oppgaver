@@ -5,6 +5,7 @@ import io.ktor.http.HttpStatusCode.Companion.Unauthorized
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.auth.Authentication
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.jwt.jwt
@@ -31,6 +32,7 @@ fun Application.configureAuth(config: AuthConfig) {
                 if (credential.payload.audience.contains(config.audience)) {
                     JWTPrincipal(credential.payload)
                 } else {
+                    this@configureAuth.log.info("Feil audience: ${credential.payload.audience}")
                     null
                 }
             }

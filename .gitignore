@@ -16,3 +16,6 @@ target
 # Gradle
 .gradle/
 apps/backend/build/
+
+
+apps/frontend/next-env.d.ts
