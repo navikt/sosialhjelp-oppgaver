@@ -25,6 +25,7 @@ class OppgaveService(private val repository: OppgaveRepository) {
                 personId = request.personId,
                 enhet = request.enhet,
                 status = OppgaveStatus.NY,
+                prioritet = request.prioritet,
                 opprettetAt = now,
                 oppdatertAt = now,
             )

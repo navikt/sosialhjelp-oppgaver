@@ -34,12 +34,12 @@ export default async function NksPage() {
   ) {
     'use server'
 
-    const { tittel, beskrivelse, enhet } = Object.fromEntries(formData) as unknown as Omit<
+    const { tittel, beskrivelse, enhet, prioritet } = Object.fromEntries(formData) as unknown as Omit<
       OpprettOppgaveRequest,
       'personId'
     >
 
-    const result = await createOppgave(token!, { tittel, beskrivelse, enhet })
+    const result = await createOppgave(token!, { tittel, beskrivelse, enhet, prioritet })
     if ('oppgave' in result) {
       revalidatePath('/nks')
     }

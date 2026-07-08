@@ -29,6 +29,13 @@ enum class OppgaveStatus {
 }
 
 @Serializable
+enum class Prioritet {
+    HØY,
+    NORMAL,
+    LAV,
+}
+
+@Serializable
 data class Oppgave(
     val id: Uuid,
     val tittel: String,
@@ -37,6 +44,7 @@ data class Oppgave(
     val personId: String,
     val enhet: String,
     val status: OppgaveStatus,
+    val prioritet: Prioritet,
     @Serializable(with = InstantSerializer::class)
     val opprettetAt: Instant,
     @Serializable(with = InstantSerializer::class)
@@ -49,6 +57,7 @@ data class OpprettOppgaveRequest(
     val beskrivelse: String,
     val enhet: String,
     val personId: String,
+    val prioritet: Prioritet = Prioritet.NORMAL,
 )
 
 @Serializable

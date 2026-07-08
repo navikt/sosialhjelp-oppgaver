@@ -1,7 +1,7 @@
 'use client'
 
 import { useActionState, useEffect, useRef } from 'react'
-import { Button, Heading, InlineMessage, Textarea, TextField, VStack } from '@navikt/ds-react'
+import { Button, Heading, InlineMessage, Select, Textarea, TextField, VStack } from '@navikt/ds-react'
 import {
   LocalAlert,
   LocalAlertContent,
@@ -63,6 +63,12 @@ export default function OppgaveForm({ opprettOppgave }: OppgaveFormProps) {
             required
             pattern="\d{4}"
           />
+
+          <Select label="Prioritet" name="prioritet" defaultValue="NORMAL">
+            <option value="HØY">Høy</option>
+            <option value="NORMAL">Normal</option>
+            <option value="LAV">Lav</option>
+          </Select>
 
           <Button type="submit" loading={pending}>
             Send oppgave

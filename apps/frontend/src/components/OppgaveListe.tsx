@@ -1,5 +1,5 @@
 import { Table, Tag } from '@navikt/ds-react'
-import type { Oppgave, OppgaveStatus } from '@/lib/api'
+import type { Oppgave, OppgaveStatus, Prioritet } from '@/lib/api'
 import {
   TableBody,
   TableDataCell,
@@ -26,6 +26,20 @@ function StatusTag({ status }: { status: OppgaveStatus }) {
   return <Tag variant={variant}>{label}</Tag>
 }
 
+function PrioritetTag({ prioritet }: { prioritet: Prioritet }) {
+  const variants: Record<
+    Prioritet,
+    { variant: 'error' | 'neutral' | 'warning'; label: string }
+  > = {
+    HØY: { variant: 'error', label: 'Høy' },
+    NORMAL: { variant: 'neutral', label: 'Normal' },
+    LAV: { variant: 'warning', label: 'Lav' },
+  }
+
+  const { variant, label } = variants[prioritet]
+  return <Tag variant={variant}>{label}</Tag>
+}
+
 function formatDato(iso: string): string {
   return new Date(iso).toLocaleString('nb-NO', {
     dateStyle: 'short',
@@ -42,6 +56,7 @@ export default function OppgaveListe({ oppgaver }: OppgaveListeProps) {
           <TableHeaderCell scope="col">Tittel</TableHeaderCell>
           <TableHeaderCell scope="col">Beskrivelse</TableHeaderCell>
           <TableHeaderCell scope="col">Status</TableHeaderCell>
+          <TableHeaderCell scope="col">Prioritet</TableHeaderCell>
           <TableHeaderCell scope="col">Opprettet av</TableHeaderCell>
           <TableHeaderCell scope="col">Opprettet</TableHeaderCell>
         </TableRow>
@@ -54,6 +69,9 @@ export default function OppgaveListe({ oppgaver }: OppgaveListeProps) {
             <TableDataCell>{oppgave.beskrivelse}</TableDataCell>
             <TableDataCell>
               <StatusTag status={oppgave.status} />
+            </TableDataCell>
+            <TableDataCell>
+              <PrioritetTag prioritet={oppgave.prioritet} />
             </TableDataCell>
             <TableDataCell>{oppgave.opprettetAv}</TableDataCell>
             <TableDataCell>{formatDato(oppgave.opprettetAt)}</TableDataCell>

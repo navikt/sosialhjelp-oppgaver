@@ -5,6 +5,7 @@ const backendUrl = process.env['BACKEND_URL'] ?? 'http://localhost:8083'
 const backendAudience = process.env['BACKEND_AUDIENCE']
 
 export type OppgaveStatus = 'NY' | 'UNDER_BEHANDLING' | 'FERDIG'
+export type Prioritet = 'HØY' | 'NORMAL' | 'LAV'
 
 export interface Oppgave {
   id: string
@@ -14,6 +15,7 @@ export interface Oppgave {
   personId: string
   enhet: string
   status: OppgaveStatus
+  prioritet: Prioritet
   opprettetAt: string
   oppdatertAt: string
 }
@@ -23,6 +25,7 @@ export interface OpprettOppgaveRequest {
   beskrivelse: string
   personId: string
   enhet: string
+  prioritet: Prioritet
 }
 
 export interface ApiError {

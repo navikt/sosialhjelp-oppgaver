@@ -19,6 +19,7 @@ object OppgaveTable : Table("oppgave") {
     val personId = varchar("person_id", 11)
     val enhet = varchar("enhet", 10)
     val status = enumerationByName<OppgaveStatus>("status", 20)
+    val prioritet = enumerationByName<Prioritet>("prioritet", 10)
     val opprettetAt = timestamp("opprettet_at")
     val oppdatertAt = timestamp("oppdatert_at")
 
@@ -36,6 +37,7 @@ object OppgaveRepository {
                 it[personId] = oppgave.personId
                 it[enhet] = oppgave.enhet
                 it[status] = oppgave.status
+                it[prioritet] = oppgave.prioritet
                 it[opprettetAt] = oppgave.opprettetAt
                 it[oppdatertAt] = oppgave.oppdatertAt
             }
@@ -89,6 +91,7 @@ object OppgaveRepository {
             personId = this[OppgaveTable.personId],
             enhet = this[OppgaveTable.enhet],
             status = this[OppgaveTable.status],
+            prioritet = this[OppgaveTable.prioritet],
             opprettetAt = this[OppgaveTable.opprettetAt],
             oppdatertAt = this[OppgaveTable.oppdatertAt],
         )
