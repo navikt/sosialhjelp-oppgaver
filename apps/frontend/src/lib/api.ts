@@ -60,12 +60,12 @@ export async function fetchOppgaver(
 }
 
 export async function createOppgave(
-  incomingToken: string,
+  token: string,
   data: Omit<OpprettOppgaveRequest, 'personId'>,
 ): Promise<{ oppgave: Oppgave } | { error: ApiError }> {
-  let token: string
+  let exchangedToken: string
   try {
-    token = await exchangeToken(incomingToken)
+    exchangedToken = await exchangeToken(token, backendAudience)
   } catch (e: unknown) {
     logger.error(e, 'Failed to exchange token')
     return { error: { message: 'Autentisering feilet', status: 401 } }
@@ -73,7 +73,7 @@ export async function createOppgave(
   const response = await fetch(`${backendUrl}/api/oppgaver`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${exchangedToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ ...data, personId: '16109127384' }),
@@ -88,11 +88,11 @@ export async function createOppgave(
 }
 
 export async function getOppgaver(
-  incomingToken: string,
+  token: string,
 ): Promise<{ oppgaver: Oppgave[] } | { error: ApiError }> {
-  let token: string
+  let exchangedToken: string
   try {
-    token = await exchangeToken(incomingToken)
+    exchangedToken = await exchangeToken(token, backendAudience)
   } catch (e: unknown) {
     logger.error(e, 'Failed to exchange token')
     return { error: { message: 'Autentisering feilet', status: 401 } }
@@ -100,7 +100,7 @@ export async function getOppgaver(
   const response = await fetch(`${backendUrl}/api/oppgaver/sok`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${exchangedToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ personId: '16109127384' }),
