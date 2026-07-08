@@ -20,8 +20,14 @@ description = "Start frontend lokalt (port 3003)"
 
 [tasks.dev]
 run = """
-cd apps/backend && AUTH_SKIP=true ./gradlew run &
-cd apps/frontend && pnpm dev --port 3003 &
+cleanup() {
+  kill -- -$$ 2>/dev/null
+  apps/backend/gradlew --project-dir apps/backend --stop 2>/dev/null
+  wait
+}
+trap cleanup INT TERM EXIT
+AUTH_SKIP=true apps/backend/gradlew --project-dir apps/backend run &
+pnpm --prefix apps/frontend dev --port 3003 &
 wait
 """
 description = "Start backend og frontend lokalt"
