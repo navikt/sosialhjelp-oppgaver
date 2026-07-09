@@ -37,19 +37,14 @@ export async function fetchOppgaver(
   token: string,
   enhet: string,
 ): Promise<{ oppgaver: Oppgave[] } | { error: ApiError }> {
-  let exhangedToken: string
-  try {
-    exhangedToken = await exchangeToken(token, backendAudience)
-  } catch (e: unknown) {
-    logger.error(e, 'Failed to exchange token')
-    return { error: { message: 'Autentisering feilet', status: 401 } }
-  }
-
   const url = `${backendUrl}/api/oppgaver?enhet=${encodeURIComponent(enhet)}`
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${exhangedToken}` },
+  const response = await exchangedFetch(url, token, {
     next: { revalidate: 0 },
   })
+
+  if ('error' in response) {
+    return response
+  }
 
   if (!response.ok) {
     return { error: { message: 'Kunne ikke hente oppgaver', status: response.status } }
@@ -63,22 +58,17 @@ export async function createOppgave(
   token: string,
   data: Omit<OpprettOppgaveRequest, 'personId'>,
 ): Promise<{ oppgave: Oppgave } | { error: ApiError }> {
-  let exchangedToken: string
-  try {
-    exchangedToken = await exchangeToken(token, backendAudience)
-  } catch (e: unknown) {
-    logger.error(e, 'Failed to exchange token')
-    return { error: { message: 'Autentisering feilet', status: 401 } }
-  }
-  const response = await fetch(`${backendUrl}/api/oppgaver`, {
+  const response = await exchangedFetch(`${backendUrl}/api/oppgaver`, token, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${exchangedToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ ...data, personId: '16109127384' }),
   })
 
+  if ('error' in response) {
+    return response
+  }
   if (!response.ok) {
     return { error: { message: 'Kunne ikke opprette oppgave', status: response.status } }
   }
@@ -92,22 +82,21 @@ export async function updateOppgaveStatus(
   id: string,
   status: OppgaveStatus,
 ): Promise<{ oppgave: Oppgave } | { error: ApiError }> {
-  let exchangedToken: string
-  try {
-    exchangedToken = await exchangeToken(token, backendAudience)
-  } catch (e: unknown) {
-    logger.error(e, 'Failed to exchange token')
-    return { error: { message: 'Autentisering feilet', status: 401 } }
-  }
-
-  const response = await fetch(`${backendUrl}/api/oppgaver/${encodeURIComponent(id)}`, {
-    method: 'PATCH',
-    headers: {
-      Authorization: `Bearer ${exchangedToken}`,
-      'Content-Type': 'application/json',
+  const response = await exchangedFetch(
+    `${backendUrl}/api/oppgaver/${encodeURIComponent(id)}`,
+    token,
+    {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
     },
-    body: JSON.stringify({ status }),
-  })
+  )
+
+  if ('error' in response) {
+    return response
+  }
 
   if (!response.ok) {
     return { error: { message: 'Kunne ikke oppdatere status', status: response.status } }
@@ -120,6 +109,30 @@ export async function updateOppgaveStatus(
 export async function getOppgaver(
   token: string,
 ): Promise<{ oppgaver: Oppgave[] } | { error: ApiError }> {
+  const response = await exchangedFetch(`${backendUrl}/api/oppgaver/sok`, token, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ personId: '16109127384' }),
+  })
+
+  if ('error' in response) {
+    return response
+  }
+  if (!response.ok) {
+    return { error: { message: 'Kunne ikke hente oppgaver', status: response.status } }
+  }
+
+  const oppgaver = (await response.json()) as Oppgave[]
+  return { oppgaver }
+}
+
+async function exchangedFetch(
+  url: string,
+  token: string,
+  options: RequestInit,
+): Promise<Response | { error: ApiError }> {
   let exchangedToken: string
   try {
     exchangedToken = await exchangeToken(token, backendAudience)
@@ -127,19 +140,11 @@ export async function getOppgaver(
     logger.error(e, 'Failed to exchange token')
     return { error: { message: 'Autentisering feilet', status: 401 } }
   }
-  const response = await fetch(`${backendUrl}/api/oppgaver/sok`, {
-    method: 'POST',
+  return fetch(url, {
+    ...options,
     headers: {
       Authorization: `Bearer ${exchangedToken}`,
-      'Content-Type': 'application/json',
+      ...options.headers,
     },
-    body: JSON.stringify({ personId: '16109127384' }),
   })
-
-  if (!response.ok) {
-    return { error: { message: 'Kunne ikke hente oppgaver', status: response.status } }
-  }
-
-  const oppgaver = (await response.json()) as Oppgave[]
-  return { oppgaver }
 }
