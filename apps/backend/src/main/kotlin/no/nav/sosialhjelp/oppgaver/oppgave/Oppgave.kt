@@ -8,6 +8,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.time.Instant
+import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 object InstantSerializer : KSerializer<Instant> {
@@ -35,6 +36,7 @@ enum class Prioritet {
     LAV,
 }
 
+@OptIn(ExperimentalUuidApi::class)
 @Serializable
 data class Oppgave(
     val id: Uuid,

@@ -1,5 +1,6 @@
 package no.nav.sosialhjelp.oppgaver.oppgave
 
+import io.github.tabilzad.ktor.annotations.GenerateOpenApi
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.auth.jwt.JWTPrincipal
 import io.ktor.server.auth.principal
@@ -11,8 +12,11 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import no.nav.sosialhjelp.oppgaver.ktor.requireScope
+import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+@GenerateOpenApi
+@OptIn(ExperimentalUuidApi::class)
 fun Route.oppgaveRoutes(
     oppgaveService: OppgaveService,
     skipAuth: Boolean = false,

@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ktor.plugin)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.inspektor)
     application
 }
 
@@ -60,8 +61,45 @@ tasks {
         useJUnitPlatform()
     }
     shadowJar {
+        dependsOn("copyOpenApiSpecMain")
         mergeServiceFiles()
         isZip64 = true
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    }
+    jar {
+        dependsOn("copyOpenApiSpecMain")
+    }
+    register("stripSchemaQualifiers") {
+        description = "Strips package qualifiers from the generated OpenAPI schema to make it more readable"
+        dependsOn("copyOpenApiSpecMain")
+        val specFile = layout.buildDirectory.file("openapi/openapi.json")
+        inputs.file(specFile)
+        outputs.file(specFile)
+        doLast {
+            val file = specFile.get().asFile
+            if (file.exists()) {
+                val packagePrefix = "no.nav.sosialhjelp.oppgaver.oppgave."
+                file.writeText(file.readText().replace(packagePrefix, ""))
+            }
+        }
+    }
+    named("build") {
+        dependsOn("stripSchemaQualifiers")
+    }
+}
+
+swagger {
+    documentation {
+        info {
+            title = "sosialhjelp-oppgaver-api"
+            description = "Api for håndtering av oppgaver i sosialhjelp"
+            version = "1.0.0"
+        }
+        servers = listOf("http://localhost:8083")
+        inferResponseSchemas = true
+    }
+
+    pluginOptions {
+        format = "json"
     }
 }

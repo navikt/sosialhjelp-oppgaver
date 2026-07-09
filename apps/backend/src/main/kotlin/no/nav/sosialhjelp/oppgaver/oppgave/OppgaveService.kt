@@ -4,6 +4,7 @@ import java.time.Instant
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class OppgaveService(private val repository: OppgaveRepository) {
     @OptIn(ExperimentalUuidApi::class)
     fun opprettOppgave(
@@ -18,7 +19,7 @@ class OppgaveService(private val repository: OppgaveRepository) {
         val now = Instant.now()
         val oppgave =
             Oppgave(
-                id = Uuid.generateV4(),
+                id = Uuid.random(),
                 tittel = request.tittel,
                 beskrivelse = request.beskrivelse,
                 opprettetAv = navIdent,

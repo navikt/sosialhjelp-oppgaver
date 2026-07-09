@@ -12,6 +12,7 @@ mockk = "1.14.11"
 testcontainers = "2.0.5"
 mock-oauth2-server = "5.0.2"
 kotlin-test = "2.4.0"
+inspektor = "0.11.2-alpha"
 
 [libraries]
 ktor-server-core = { module = "io.ktor:ktor-server-core", version.ref = "ktor" }
@@ -49,3 +50,4 @@ kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", versi
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor-plugin = { id = "io.ktor.plugin", version.ref = "ktor" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "12.3.0" }
+inspektor = { id = "io.github.tabilzad.inspektor", version.ref = "inspektor" }
