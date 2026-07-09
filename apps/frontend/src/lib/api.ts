@@ -87,6 +87,36 @@ export async function createOppgave(
   return { oppgave }
 }
 
+export async function updateOppgaveStatus(
+  token: string,
+  id: string,
+  status: OppgaveStatus,
+): Promise<{ oppgave: Oppgave } | { error: ApiError }> {
+  let exchangedToken: string
+  try {
+    exchangedToken = await exchangeToken(token, backendAudience)
+  } catch (e: unknown) {
+    logger.error(e, 'Failed to exchange token')
+    return { error: { message: 'Autentisering feilet', status: 401 } }
+  }
+
+  const response = await fetch(`${backendUrl}/api/oppgaver/${encodeURIComponent(id)}`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${exchangedToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ status }),
+  })
+
+  if (!response.ok) {
+    return { error: { message: 'Kunne ikke oppdatere status', status: response.status } }
+  }
+
+  const oppgave = (await response.json()) as Oppgave
+  return { oppgave }
+}
+
 export async function getOppgaver(
   token: string,
 ): Promise<{ oppgaver: Oppgave[] } | { error: ApiError }> {
