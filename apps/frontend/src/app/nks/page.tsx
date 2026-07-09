@@ -7,13 +7,15 @@ import NksOppgaveListe from '@/components/NksOppgaveListe'
 import { authenticate } from '@/lib/auth'
 
 export default async function NksPage() {
-  const token = await authenticate()
+  await authenticate()
 
   async function opprettOppgave(
     _prevState: { oppgave: Oppgave } | { error: ApiError } | null,
     formData: FormData,
   ) {
     'use server'
+
+    const token = await authenticate()
 
     const { tittel, beskrivelse, enhet, prioritet } = Object.fromEntries(
       formData,

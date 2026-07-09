@@ -1,6 +1,6 @@
 'use client'
 
-import { useOptimistic, useState, useTransition } from 'react'
+import { useOptimistic, useTransition } from 'react'
 
 interface UseOptimisticActionResult<T> {
   value: T
