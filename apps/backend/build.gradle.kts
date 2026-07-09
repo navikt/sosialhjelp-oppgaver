@@ -97,6 +97,17 @@ swagger {
         }
         servers = listOf("http://localhost:8083")
         inferResponseSchemas = true
+        serialOverrides {
+            typeOverride("java.time.Instant") {
+                serializedAs = "string"
+                format = "date-time"
+                description = "ISO 8601 timestamp"
+            }
+            typeOverride("kotlin.uuid.Uuid") {
+                serializedAs = "string"
+                format = "uuid"
+            }
+        }
     }
 
     pluginOptions {

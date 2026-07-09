@@ -1,9 +1,7 @@
-import { headers } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
-import { getToken, validateAzureToken } from '@navikt/oasis'
 import OppgaveForm from '@/components/OppgaveForm'
-import { createOppgave, Oppgave, ApiError, OpprettOppgaveRequest } from '@/lib/api'
+import { createApiClient } from '@/lib/api'
+import type { Oppgave, ApiError, OpprettOppgaveRequest } from '@/lib/api'
 import { Heading, VStack } from '@navikt/ds-react'
 import NksOppgaveListe from '@/components/NksOppgaveListe'
 import { authenticate } from '@/lib/auth'
@@ -21,11 +19,16 @@ export default async function NksPage() {
       formData,
     ) as unknown as Omit<OpprettOppgaveRequest, 'personId'>
 
-    const result = await createOppgave(token, { tittel, beskrivelse, enhet, prioritet })
-    if ('oppgave' in result) {
-      revalidatePath('/nks')
+    const { data, error } = await createApiClient(token).POST('/api/oppgaver', {
+      body: { tittel, beskrivelse, enhet, prioritet, personId: '16109127384' },
+    })
+
+    if (error) {
+      return { error: { message: 'Kunne ikke opprette oppgave', status: 500 } }
     }
-    return result
+
+    revalidatePath('/nks')
+    return { oppgave: data }
   }
 
   return (

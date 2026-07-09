@@ -5,7 +5,7 @@ import {
   LocalAlertHeader,
   LocalAlertTitle,
 } from '@navikt/ds-react/LocalAlert'
-import { fetchOppgaver } from '@/lib/api'
+import { createApiClient } from '@/lib/api'
 import { authenticate } from '@/lib/auth'
 import NavkontorOppgaveListe from '@/components/NavkontorOppgaveListe'
 
@@ -15,7 +15,9 @@ const ENHET = process.env['HARDCODED_ENHET'] ?? '0301'
 async function NavkontorPage() {
   const token = await authenticate()
 
-  const result = await fetchOppgaver(token, ENHET)
+  const { data, error } = await createApiClient(token).GET('/api/oppgaver', {
+    params: { query: { enhet: ENHET } },
+  })
 
   return (
     <Box className="mt-20">
@@ -23,15 +25,15 @@ async function NavkontorPage() {
         Oppgaver for enhet {ENHET}
       </Heading>
 
-      {'error' in result ? (
+      {error ? (
         <LocalAlert status="error">
           <LocalAlertHeader>
             <LocalAlertTitle as="h2">Kunne ikke hente oppgaver</LocalAlertTitle>
           </LocalAlertHeader>
-          <LocalAlertContent>{result.error.message}</LocalAlertContent>
+          <LocalAlertContent>Kunne ikke hente oppgaver</LocalAlertContent>
         </LocalAlert>
       ) : (
-        <NavkontorOppgaveListe oppgaver={result.oppgaver} />
+        <NavkontorOppgaveListe oppgaver={data} />
       )}
     </Box>
   )

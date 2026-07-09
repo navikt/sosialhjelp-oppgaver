@@ -4,203 +4,208 @@
  */
 
 export interface paths {
-    "/api/oppgaver": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: {
-                    enhet?: string;
-                };
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Oppgave"][];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["OpprettOppgaveRequest"];
-                };
-            };
-            responses: {
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Oppgave"];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/oppgaver/sok": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path?: never;
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["GetOppgaverResponse"];
-                };
-            };
-            responses: {
-                201: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Oppgave"][];
-                    };
-                };
-            };
-        };
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/oppgaver/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody?: never;
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Oppgave"];
-                    };
-                };
-            };
-        };
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch: {
-            parameters: {
-                query?: never;
-                header?: never;
-                path: {
-                    id: string;
-                };
-                cookie?: never;
-            };
-            requestBody: {
-                content: {
-                    "application/json": components["schemas"]["OppdaterStatusRequest"];
-                };
-            };
-            responses: {
-                200: {
-                    headers: {
-                        [name: string]: unknown;
-                    };
-                    content: {
-                        "application/json": components["schemas"]["Oppgave"];
-                    };
-                };
-            };
-        };
-        trace?: never;
-    };
+  '/api/oppgaver': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: {
+      parameters: {
+        query?: {
+          enhet?: string
+        }
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': components['schemas']['Oppgave'][]
+          }
+        }
+      }
+    }
+    put?: never
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['OpprettOppgaveRequest']
+        }
+      }
+      responses: {
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': components['schemas']['Oppgave']
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/oppgaver/sok': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get?: never
+    put?: never
+    post: {
+      parameters: {
+        query?: never
+        header?: never
+        path?: never
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['GetOppgaverResponse']
+        }
+      }
+      responses: {
+        201: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': components['schemas']['Oppgave'][]
+          }
+        }
+      }
+    }
+    delete?: never
+    options?: never
+    head?: never
+    patch?: never
+    trace?: never
+  }
+  '/api/oppgaver/{id}': {
+    parameters: {
+      query?: never
+      header?: never
+      path?: never
+      cookie?: never
+    }
+    get: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody?: never
+      responses: {
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': components['schemas']['Oppgave']
+          }
+        }
+      }
+    }
+    put?: never
+    post?: never
+    delete?: never
+    options?: never
+    head?: never
+    patch: {
+      parameters: {
+        query?: never
+        header?: never
+        path: {
+          id: string
+        }
+        cookie?: never
+      }
+      requestBody: {
+        content: {
+          'application/json': components['schemas']['OppdaterStatusRequest']
+        }
+      }
+      responses: {
+        200: {
+          headers: {
+            [name: string]: unknown
+          }
+          content: {
+            'application/json': components['schemas']['Oppgave']
+          }
+        }
+      }
+    }
+    trace?: never
+  }
 }
-export type webhooks = Record<string, never>;
+export type webhooks = Record<string, never>
 export interface components {
-    schemas: {
-        "java.time.Instant": Record<string, never>;
-        "kotlin.uuid.Uuid": Record<string, never>;
-        GetOppgaverResponse: {
-            personId: string;
-        };
-        OppdaterStatusRequest: {
-            /** @enum {string} */
-            status: "NY" | "UNDER_BEHANDLING" | "FERDIG";
-        };
-        Oppgave: {
-            beskrivelse: string;
-            enhet: string;
-            id: components["schemas"]["kotlin.uuid.Uuid"];
-            oppdatertAt: components["schemas"]["java.time.Instant"];
-            opprettetAt: components["schemas"]["java.time.Instant"];
-            opprettetAv: string;
-            personId: string;
-            /** @enum {string} */
-            prioritet: "HØY" | "NORMAL" | "LAV";
-            /** @enum {string} */
-            status: "NY" | "UNDER_BEHANDLING" | "FERDIG";
-            tittel: string;
-        };
-        OpprettOppgaveRequest: {
-            beskrivelse: string;
-            enhet: string;
-            personId: string;
-            /** @enum {string} */
-            prioritet?: "HØY" | "NORMAL" | "LAV";
-            tittel: string;
-        };
-    };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+  schemas: {
+    /**
+     * Format: date-time
+     * @description ISO 8601 timestamp
+     */
+    'java.time.Instant': string
+    /** Format: uuid */
+    'kotlin.uuid.Uuid': string
+    GetOppgaverResponse: {
+      personId: string
+    }
+    OppdaterStatusRequest: {
+      /** @enum {string} */
+      status: 'NY' | 'UNDER_BEHANDLING' | 'FERDIG'
+    }
+    Oppgave: {
+      beskrivelse: string
+      enhet: string
+      id: components['schemas']['kotlin.uuid.Uuid']
+      oppdatertAt: components['schemas']['java.time.Instant']
+      opprettetAt: components['schemas']['java.time.Instant']
+      opprettetAv: string
+      personId: string
+      /** @enum {string} */
+      prioritet: 'HØY' | 'NORMAL' | 'LAV'
+      /** @enum {string} */
+      status: 'NY' | 'UNDER_BEHANDLING' | 'FERDIG'
+      tittel: string
+    }
+    OpprettOppgaveRequest: {
+      beskrivelse: string
+      enhet: string
+      personId: string
+      /** @enum {string} */
+      prioritet?: 'HØY' | 'NORMAL' | 'LAV'
+      tittel: string
+    }
+  }
+  responses: never
+  parameters: never
+  requestBodies: never
+  headers: never
+  pathItems: never
 }
-export type $defs = Record<string, never>;
-export type operations = Record<string, never>;
+export type $defs = Record<string, never>
+export type operations = Record<string, never>
