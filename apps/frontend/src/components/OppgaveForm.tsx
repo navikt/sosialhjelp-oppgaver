@@ -16,16 +16,10 @@ import {
   LocalAlertHeader,
   LocalAlertTitle,
 } from '@navikt/ds-react/LocalAlert'
-import type { Oppgave, ApiError } from '@/lib/api'
 import { ENHETER } from '@/lib/enheter'
+import { opprettOppgave } from '@/app/nks/actions'
 
-type ActionState = { oppgave: Oppgave } | { error: ApiError } | null
-
-interface OppgaveFormProps {
-  opprettOppgave: (prevState: ActionState, formData: FormData) => Promise<ActionState>
-}
-
-export default function OppgaveForm({ opprettOppgave }: OppgaveFormProps) {
+export default function OppgaveForm() {
   const [state, formAction, pending] = useActionState(opprettOppgave, null)
 
   return (
