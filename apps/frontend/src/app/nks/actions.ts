@@ -11,9 +11,10 @@ export async function opprettOppgave(
 ): Promise<{ oppgave: Oppgave } | { error: ApiError }> {
   const token = await authenticate()
 
-  const { tittel, beskrivelse, enhet, prioritet } = Object.fromEntries(
-    formData,
-  ) as unknown as Omit<OpprettOppgaveRequest, 'personId'>
+  const { tittel, beskrivelse, enhet, prioritet } = Object.fromEntries(formData) as unknown as Omit<
+    OpprettOppgaveRequest,
+    'personId'
+  >
 
   const { data, error } = await createApiClient(token).POST('/api/oppgaver', {
     body: { tittel, beskrivelse, enhet, prioritet, personId: '16109127384' },
