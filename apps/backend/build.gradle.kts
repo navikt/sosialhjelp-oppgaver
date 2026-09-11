@@ -25,6 +25,13 @@ repositories {
 }
 
 dependencies {
+    // eksplisitt pga. sårbarheter - sjekk opp ved oppdatering av ktor, flyway og logstash-encoder
+    // netty dras inn av ktor-server-netty, jackson 2.x av java-jwt/jwks-rsa (via ktor-server-auth-jwt),
+    // jackson 3.x (tools.jackson) av flyway-core og logstash-logback-encoder
+    implementation(platform(libs.netty.bom))
+    implementation(platform(libs.fasterxml.jackson.bom))
+    implementation(platform(libs.jackson3.bom))
+
     implementation(libs.ktor.server.core)
     implementation(libs.ktor.server.netty)
     implementation(libs.ktor.server.content.negotiation)
