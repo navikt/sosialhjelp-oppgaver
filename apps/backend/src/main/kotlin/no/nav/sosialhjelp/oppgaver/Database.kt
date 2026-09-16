@@ -29,10 +29,7 @@ class Database(config: DatabaseConfig) {
             Flyway.configure()
                 .dataSource(dataSource)
                 .lockRetryCount(10)
-                .cleanDisabled(false)
                 .load()
-        flyway
-            .clean()
         flyway.migrate()
     }
 }

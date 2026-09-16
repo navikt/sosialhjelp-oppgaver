@@ -35,8 +35,8 @@ export function StatusTag({ status }: { status: OppgaveStatus }) {
 
 export function PrioritetTag({ prioritet }: { prioritet: Prioritet }) {
   const variants: Record<Prioritet, { variant: 'error' | 'neutral' | 'warning'; label: string }> = {
-    HØY: { variant: 'error', label: 'Høy' },
-    NORMAL: { variant: 'neutral', label: 'Normal' },
+    HOY: { variant: 'error', label: 'Høy' },
+    NORM: { variant: 'neutral', label: 'Normal' },
     LAV: { variant: 'warning', label: 'Lav' },
   }
 

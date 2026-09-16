@@ -12,11 +12,9 @@ import io.ktor.server.routing.patch
 import io.ktor.server.routing.post
 import io.ktor.server.routing.route
 import no.nav.sosialhjelp.oppgaver.ktor.requireScope
-import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @GenerateOpenApi
-@OptIn(ExperimentalUuidApi::class)
 fun Route.oppgaveRoutes(
     oppgaveService: OppgaveService,
     skipAuth: Boolean = false,
@@ -24,32 +22,20 @@ fun Route.oppgaveRoutes(
     route("/api/oppgaver") {
         post {
             if (!skipAuth) call.requireScope("nks")
-            val navIdent =
-                if (skipAuth) {
-                    "local-dev"
-                } else {
-                    val principal = call.principal<JWTPrincipal>()!!
-                    principal.payload.getClaim("NAVident").asString()
-                        ?: throw IllegalArgumentException("NAVident mangler i token")
-                }
             val request = call.receive<OpprettOppgaveRequest>()
-            val oppgave = oppgaveService.opprettOppgave(request, navIdent)
+            val oppgave =
+                oppgaveService.opprettOppgave(
+                    request,
+                    call.navIdent(skipAuth),
+                )
             call.respond(HttpStatusCode.Created, oppgave)
         }
 
         post("/sok") {
             if (!skipAuth) call.requireScope("nks")
-            val navIdent =
-                if (skipAuth) {
-                    "local-dev"
-                } else {
-                    val principal = call.principal<JWTPrincipal>()!!
-                    principal.payload.getClaim("NAVident").asString()
-                        ?: throw IllegalArgumentException("NAVident mangler i token")
-                }
-            val request = call.receive<GetOppgaverResponse>()
-            val oppgaver = oppgaveService.hentOppgaverForPerson(request.personId)
-            call.respond(HttpStatusCode.Created, oppgaver)
+            val request = call.receive<SokOppgaverRequest>()
+            val oppgaver = oppgaveService.sok(request)
+            call.respond(HttpStatusCode.OK, oppgaver)
         }
 
         get {
@@ -81,3 +67,12 @@ fun Route.oppgaveRoutes(
         }
     }
 }
+
+private fun io.ktor.server.application.ApplicationCall.navIdent(skipAuth: Boolean): String =
+    if (skipAuth) {
+        "local-dev"
+    } else {
+        val principal = principal<JWTPrincipal>()!!
+        principal.payload.getClaim("NAVident").asString()
+            ?: throw IllegalArgumentException("NAVident mangler i token")
+    }

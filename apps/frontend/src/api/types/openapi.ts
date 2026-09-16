@@ -80,11 +80,11 @@ export interface paths {
       }
       requestBody: {
         content: {
-          'application/json': components['schemas']['GetOppgaverResponse']
+          'application/json': components['schemas']['SokOppgaverRequest']
         }
       }
       responses: {
-        201: {
+        200: {
           headers: {
             [name: string]: unknown
           }
@@ -171,9 +171,6 @@ export interface components {
     'java.time.Instant': string
     /** Format: uuid */
     'kotlin.uuid.Uuid': string
-    GetOppgaverResponse: {
-      personId: string
-    }
     OppdaterStatusRequest: {
       /** @enum {string} */
       status: 'NY' | 'UNDER_BEHANDLING' | 'FERDIG'
@@ -187,18 +184,27 @@ export interface components {
       opprettetAv: string
       personId: string
       /** @enum {string} */
-      prioritet: 'HØY' | 'NORMAL' | 'LAV'
+      prioritet: 'HOY' | 'NORM' | 'LAV'
+      referanse: number
       /** @enum {string} */
       status: 'NY' | 'UNDER_BEHANDLING' | 'FERDIG'
-      tittel: string
+      tilordnetRessurs?: string
+      tittel?: string
     }
     OpprettOppgaveRequest: {
       beskrivelse: string
       enhet: string
       personId: string
       /** @enum {string} */
-      prioritet?: 'HØY' | 'NORMAL' | 'LAV'
-      tittel: string
+      prioritet?: 'HOY' | 'NORM' | 'LAV'
+      tilordnetRessurs?: string
+      tittel?: string
+    }
+    SokOppgaverRequest: {
+      personId?: string
+      /** @enum {string} */
+      status?: ('NY' | 'UNDER_BEHANDLING' | 'FERDIG')[]
+      tilordnetRessurs?: string
     }
   }
   responses: never

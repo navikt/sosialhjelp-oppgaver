@@ -31,8 +31,8 @@ enum class OppgaveStatus {
 
 @Serializable
 enum class Prioritet {
-    HØY,
-    NORMAL,
+    HOY,
+    NORM,
     LAV,
 }
 
@@ -40,9 +40,11 @@ enum class Prioritet {
 @Serializable
 data class Oppgave(
     val id: Uuid,
-    val tittel: String,
+    val referanse: Long,
+    val tittel: String?,
     val beskrivelse: String,
     val opprettetAv: String,
+    val tilordnetRessurs: String?,
     val personId: String,
     val enhet: String,
     val status: OppgaveStatus,
@@ -55,11 +57,12 @@ data class Oppgave(
 
 @Serializable
 data class OpprettOppgaveRequest(
-    val tittel: String,
     val beskrivelse: String,
     val enhet: String,
     val personId: String,
-    val prioritet: Prioritet = Prioritet.NORMAL,
+    val tittel: String? = null,
+    val tilordnetRessurs: String? = null,
+    val prioritet: Prioritet = Prioritet.NORM,
 )
 
 @Serializable
@@ -68,6 +71,8 @@ data class OppdaterStatusRequest(
 )
 
 @Serializable
-data class GetOppgaverResponse(
-    val personId: String,
+data class SokOppgaverRequest(
+    val personId: String? = null,
+    val tilordnetRessurs: String? = null,
+    val status: List<OppgaveStatus>? = null,
 )
