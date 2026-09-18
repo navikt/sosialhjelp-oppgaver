@@ -48,7 +48,6 @@ export default function OppgaveForm() {
             label="Tittel"
             description="Kort beskrivelse av oppgaven"
             name="tittel"
-            required
             maxLength={200}
           />
 
@@ -67,9 +66,9 @@ export default function OppgaveForm() {
             ))}
           </Select>
 
-          <Select label="Prioritet" name="prioritet" defaultValue="NORMAL">
-            <option value="HØY">Høy</option>
-            <option value="NORMAL">Normal</option>
+          <Select label="Prioritet" name="prioritet" defaultValue="NORM">
+            <option value="HOY">Høy</option>
+            <option value="NORM">Normal</option>
             <option value="LAV">Lav</option>
           </Select>
 

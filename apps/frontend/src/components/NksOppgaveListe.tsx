@@ -10,7 +10,7 @@ import { InlineMessage } from '@navikt/ds-react'
 import { authenticate } from '@/lib/auth'
 
 const kolonner: OppgaveKolonne[] = [
-  { header: 'Tittel', render: (o) => o.tittel },
+  { header: 'Tittel', render: (o) => o.tittel ?? '-' },
   { header: 'Beskrivelse', render: (o) => o.beskrivelse },
   { header: 'Enhet', render: (o) => enhetNavn(o.enhet) },
   { header: 'Status', render: (o) => <StatusTag status={o.status} /> },

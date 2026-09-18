@@ -11,18 +11,20 @@ class OppgaveService(private val repository: OppgaveRepository) {
         request: OpprettOppgaveRequest,
         navIdent: String,
     ): Oppgave {
-        require(request.tittel.isNotBlank()) { "Tittel kan ikke være tom" }
         require(request.enhet.isNotBlank()) { "Enhet kan ikke være tom" }
         require(request.beskrivelse.isNotBlank()) { "Beskrivelse kan ikke være tom" }
         require(request.personId.isNotBlank()) { "PersonId kan ikke være tom" }
-
+        require(
+            request.tilordnetRessurs == null || request.tilordnetRessurs.length <= 7,
+        ) { "Tilordnet ressurs kan ikke være lengre enn 7 tegn" }
         val now = Instant.now()
         val oppgave =
-            Oppgave(
+            NyOppgave(
                 id = Uuid.random(),
                 tittel = request.tittel,
                 beskrivelse = request.beskrivelse,
                 opprettetAv = navIdent,
+                tilordnetRessurs = request.tilordnetRessurs,
                 personId = request.personId,
                 enhet = request.enhet,
                 status = OppgaveStatus.NY,
@@ -49,8 +51,10 @@ class OppgaveService(private val repository: OppgaveRepository) {
             ?: throw NoSuchElementException("Oppgave $id ikke funnet")
     }
 
-    fun hentOppgaverForPerson(personId: String): List<Oppgave> {
-        require(personId.isNotBlank()) { "PersonId kan ikke være tom" }
-        return repository.hentForPersonId(personId)
+    fun sok(request: SokOppgaverRequest): List<Oppgave> {
+        require(request.personId != null || request.tilordnetRessurs != null || !request.status.isNullOrEmpty()) {
+            "Minst ett søkekriterium er påkrevd"
+        }
+        return repository.sok(request)
     }
 }

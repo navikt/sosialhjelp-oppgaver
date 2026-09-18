@@ -4,9 +4,11 @@ package no.nav.sosialhjelp.oppgaver.oppgave
 
 import org.jetbrains.exposed.v1.core.ResultRow
 import org.jetbrains.exposed.v1.core.Table
+import org.jetbrains.exposed.v1.core.and
 import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.inList
 import org.jetbrains.exposed.v1.javatime.timestamp
-import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.insertReturning
 import org.jetbrains.exposed.v1.jdbc.selectAll
 import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.jetbrains.exposed.v1.jdbc.update
@@ -16,9 +18,11 @@ import kotlin.uuid.Uuid
 
 object OppgaveTable : Table("oppgave") {
     val id = uuid("id")
-    val tittel = varchar("tittel", 500)
+    val referanse = long("referanse")
+    val tittel = varchar("tittel", 500).nullable()
     val beskrivelse = text("beskrivelse")
     val opprettetAv = varchar("opprettet_av", 20)
+    val tilordnetRessurs = varchar("tilordnet_ressurs", 7).nullable()
     val personId = varchar("person_id", 11)
     val enhet = varchar("enhet", 10)
     val status = enumerationByName<OppgaveStatus>("status", 20)
@@ -29,22 +33,36 @@ object OppgaveTable : Table("oppgave") {
     override val primaryKey = PrimaryKey(id)
 }
 
+data class NyOppgave(
+    val id: Uuid,
+    val tittel: String?,
+    val beskrivelse: String,
+    val opprettetAv: String,
+    val tilordnetRessurs: String?,
+    val personId: String,
+    val enhet: String,
+    val status: OppgaveStatus,
+    val prioritet: Prioritet,
+    val opprettetAt: Instant,
+    val oppdatertAt: Instant,
+)
+
 object OppgaveRepository {
-    fun lagre(oppgave: Oppgave): Oppgave =
+    fun lagre(oppgave: NyOppgave): Oppgave =
         transaction {
-            OppgaveTable.insert {
+            OppgaveTable.insertReturning {
                 it[id] = oppgave.id
                 it[tittel] = oppgave.tittel
                 it[beskrivelse] = oppgave.beskrivelse
                 it[opprettetAv] = oppgave.opprettetAv
+                it[tilordnetRessurs] = oppgave.tilordnetRessurs
                 it[personId] = oppgave.personId
                 it[enhet] = oppgave.enhet
                 it[status] = oppgave.status
                 it[prioritet] = oppgave.prioritet
                 it[opprettetAt] = oppgave.opprettetAt
                 it[oppdatertAt] = oppgave.oppdatertAt
-            }
-            oppgave
+            }.single().toOppgave()
         }
 
     fun hentForEnhet(enhet: String): List<Oppgave> =
@@ -55,11 +73,17 @@ object OppgaveRepository {
                 .map { it.toOppgave() }
         }
 
-    fun hentForPersonId(personId: String): List<Oppgave> =
+    fun sok(request: SokOppgaverRequest): List<Oppgave> =
         transaction {
             OppgaveTable
                 .selectAll()
-                .where { OppgaveTable.personId eq personId }
+                .where {
+                    listOfNotNull(
+                        request.personId?.let { OppgaveTable.personId eq it },
+                        request.tilordnetRessurs?.let { OppgaveTable.tilordnetRessurs eq it },
+                        request.status?.takeIf { it.isNotEmpty() }?.let { OppgaveTable.status inList it },
+                    ).reduce { predicate, next -> predicate and next }
+                }
                 .map { it.toOppgave() }
         }
 
@@ -88,9 +112,11 @@ object OppgaveRepository {
     private fun ResultRow.toOppgave() =
         Oppgave(
             id = this[OppgaveTable.id],
+            referanse = this[OppgaveTable.referanse],
             tittel = this[OppgaveTable.tittel],
             beskrivelse = this[OppgaveTable.beskrivelse],
             opprettetAv = this[OppgaveTable.opprettetAv],
+            tilordnetRessurs = this[OppgaveTable.tilordnetRessurs],
             personId = this[OppgaveTable.personId],
             enhet = this[OppgaveTable.enhet],
             status = this[OppgaveTable.status],
