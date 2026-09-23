@@ -1,0 +1,68 @@
+version: 2
+registries:
+  npm-github:
+    type: npm-registry
+    url: https://npm.pkg.github.com
+    scope: "@navikt"
+    token: ${{ secrets.READER_TOKEN }}
+
+updates:
+  - package-ecosystem: "gradle"
+    directory: "/apps/backend"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 8
+    commit-message:
+      prefix: "[gradle]"
+    groups:
+      patch:
+        update-types:
+          - "patch"
+      minor:
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "npm"
+    directory: "/apps/frontend"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 8
+    registries:
+      - npm-github
+    commit-message:
+      prefix: "[npm]"
+    groups:
+      patch:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+      minor:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+
+  - package-ecosystem: "docker"
+    directory: "/apps/backend"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 8
+    commit-message:
+      prefix: "[docker]"
+
+  - package-ecosystem: "docker"
+    directory: "/apps/frontend"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 8
+    commit-message:
+      prefix: "[docker]"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 8
+    commit-message:
+      prefix: "[gha]"
