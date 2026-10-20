@@ -55,5 +55,5 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 ktor-plugin = { id = "io.ktor.plugin", version.ref = "ktor" }
-ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "12.3.0" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version = "14.2.0" }
 inspektor = { id = "io.github.tabilzad.inspektor", version.ref = "inspektor" }
