@@ -1,6 +1,8 @@
-name: Deploy (manual)
+name: Deploy (manual + nightly)
 
 on:
+  schedule:
+    - cron: "0 2 * * *"
   workflow_dispatch:
     inputs:
       app:
@@ -20,9 +22,13 @@ permissions:
   contents: read
   id-token: write
 
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build-backend:
-    if: (inputs.app == 'backend' || inputs.app == 'both') && inputs.image == ''
+    if: (inputs.app || 'both') != 'frontend' && !inputs.image
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -53,7 +59,7 @@ jobs:
     needs: [build-backend]
     if: |
       always() &&
-      (inputs.app == 'backend' || inputs.app == 'both') &&
+      (inputs.app || 'both') != 'frontend' &&
       (needs.build-backend.result == 'success' || needs.build-backend.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -67,7 +73,7 @@ jobs:
           VAR: image=${{ inputs.image || needs.build-backend.outputs.image }}
 
   build-frontend:
-    if: (inputs.app == 'frontend' || inputs.app == 'both') && inputs.image == ''
+    if: (inputs.app || 'both') != 'backend' && !inputs.image
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
@@ -106,12 +112,12 @@ jobs:
     needs: [build-frontend]
     if: |
       always() &&
-      (inputs.app == 'frontend' || inputs.app == 'both') &&
+      (inputs.app || 'both') != 'backend' &&
       (needs.build-frontend.result == 'success' || needs.build-frontend.result == 'skipped')
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v7 # v4.1.1
+      - uses: actions/checkout@v7
 
       - uses: nais/deploy/actions/deploy@v2
         env:
